@@ -24,7 +24,6 @@ import Swal from "sweetalert2";
 import axios from "axios";
 import UploadAttchment from "../UploadAttachmentTemplate/UploadAttchment";
 import { connect } from "react-redux";
-import { RadioGroup } from "devextreme-react/radio-group";
 
 export class Feedback extends Component {
   constructor(props) {
@@ -63,20 +62,6 @@ export class Feedback extends Component {
       // { ID: 3, Name: "Good" },
       // { ID: 4, Name: "Better" },
       // { ID: 5, Name: "Best" },
-    ];
-
-    this.RiskLevel = [
-      { ID: 1, Name: "Low" },
-      { ID: 2, Name: "Medium" },
-      { ID: 3, Name: "High" },
-    ];
-
-    this.waseDisposed = [
-      { ID: 1, Name: "General Waste" },
-      { ID: 2, Name: "Recycling " },
-      { ID: 3, Name: "Food Waste " },
-      { ID: 4, Name: "Hazardous Waste " },
-      { ID: 5, Name: "Garden Waste " },
     ];
 
     this.mimeTypes = {
@@ -124,9 +109,9 @@ export class Feedback extends Component {
               ></Item>
               <Item
                 dataField='PhiID'
-                // editorOptions={{
-                //   readOnly: true,
-                // }}
+                editorOptions={{
+                  readOnly: true,
+                }}
               >
                 <Label text='PHI ID' />
                 <RequiredRule message='Field is required to fill' />
@@ -185,7 +170,6 @@ export class Feedback extends Component {
               </Item>
             </GroupItem>
           </Form>
-
           <Form ref={this.FormRef} formData={this.state.jFeedback}>
             <GroupItem caption='Dengue Inspection Form'>
               <Item
@@ -203,6 +187,7 @@ export class Feedback extends Component {
               <Item dataField='Remark1' editorType='dxTextArea'>
                 <Label text='Remark' />
               </Item>
+
               <Item
                 dataField='Question2'
                 editorType='dxRadioGroup'
@@ -213,11 +198,12 @@ export class Feedback extends Component {
                   layout: "horizontal",
                 }}
               >
-                <Label text='Are there discarded tries,coconut shells,or plastic waste in open areas?' />
+                <Label text='Are there any stagnant water collections in the premises?' />
               </Item>
               <Item dataField='Remark2' editorType='dxTextArea'>
                 <Label text='Remark' />
               </Item>
+
               <Item
                 dataField='Question3'
                 editorType='dxRadioGroup'
@@ -228,11 +214,12 @@ export class Feedback extends Component {
                   layout: "horizontal",
                 }}
               >
-                <Label text='Are there uncovered water storage containers?' />
+                <Label text='Are there any stagnant water collections in the premises?' />
               </Item>
               <Item dataField='Remark3' editorType='dxTextArea'>
                 <Label text='Remark' />
               </Item>
+
               <Item
                 dataField='Question4'
                 editorType='dxRadioGroup'
@@ -243,133 +230,10 @@ export class Feedback extends Component {
                   layout: "horizontal",
                 }}
               >
-                <Label text='Are mosquito larvae found in any water holding containers?' />
+                <Label text='Are there any stagnant water collections in the premises?' />
               </Item>
               <Item dataField='Remark4' editorType='dxTextArea'>
                 <Label text='Remark' />
-              </Item>
-              <Item
-                dataField='Question5'
-                editorType='dxRadioGroup'
-                editorOptions={{
-                  items: this.AnswerResult,
-                  valueExpr: "ID",
-                  displayExpr: "Name",
-                  layout: "horizontal",
-                }}
-              >
-                <Label text='Have dengue cases been reported in this household before?' />
-              </Item>
-              <Item dataField='Remark5' editorType='dxTextArea'>
-                <Label text='If yes, how many residents were affected?' />
-              </Item>
-
-              <Item
-                dataField='Question7'
-                editorType='dxRadioGroup'
-                editorOptions={{
-                  items: this.AnswerResult,
-                  valueExpr: "ID",
-                  displayExpr: "Name",
-                  layout: "horizontal",
-                }}
-              >
-                <Label text='Are there any water-filled potholes or drains nearby?' />
-              </Item>
-              <Item dataField='Remark7' editorType='dxTextArea'>
-                <Label text='Remark' />
-              </Item>
-              <Item
-                dataField='Question8'
-                editorType='dxRadioGroup'
-                editorOptions={{
-                  items: this.AnswerResult,
-                  valueExpr: "ID",
-                  displayExpr: "Name",
-                  layout: "horizontal",
-                }}
-              >
-                <Label text='Are there unused household items that collect water??' />
-              </Item>
-              <Item dataField='Remark8' editorType='dxTextArea'>
-                <Label text='Remark' />
-              </Item>
-              {/* <Item
-                dataField='Question9'
-                editorType='dxSelectBox'
-                editorOptions={{
-                  items: this.waseDisposed,
-                  valueExpr: "ID",
-                  displayExpr: "Name",
-                  // layout: "horizontal",
-                }}
-              >
-                <Label text='How is household waste disposed of?' />
-              </Item> */}
-
-              <Item
-                dataField='Question10'
-                editorType='dxRadioGroup'
-                editorOptions={{
-                  items: this.AnswerResult,
-                  valueExpr: "ID",
-                  displayExpr: "Name",
-                  layout: "horizontal",
-                }}
-              >
-                <Label text='If there a proper waste segregation system?' />
-              </Item>
-              <Item dataField='Remark10' editorType='dxTextArea'>
-                <Label text='Remark' />
-              </Item>
-              <Item
-                dataField='Question11'
-                editorType='dxRadioGroup'
-                editorOptions={{
-                  items: this.AnswerResult,
-                  valueExpr: "ID",
-                  displayExpr: "Name",
-                  layout: "horizontal",
-                }}
-              >
-                <Label text='Do household members use mosquito nets?' />
-              </Item>
-              <Item dataField='Remark11' editorType='dxTextArea'>
-                <Label text='Remark' />
-              </Item>
-              <Item
-                dataField='Question12'
-                editorType='dxRadioGroup'
-                editorOptions={{
-                  items: this.RiskLevel,
-                  valueExpr: "ID",
-                  displayExpr: "Name",
-                  layout: "horizontal",
-                }}
-              >
-                <Label text='Dengue Risk level for the Household?' />
-              </Item>
-              <Item dataField='Remark12' editorType='dxTextArea'>
-                <Label text='Remark' />
-              </Item>
-              <Item
-                dataField='Question13'
-                editorType='dxSelectBox'
-                editorOptions={{
-                  items: this.AnswerResult,
-                  valueExpr: "ID",
-                  displayExpr: "Name",
-                }}
-              >
-                <Label text='Immediate Action Taken?' />
-              </Item>
-
-              <Item dataField='followUpDate' editorType='dxDateBox'>
-                <Label text='Next Follow-up Date' />
-              </Item>
-
-              <Item dataField='InspectionNotes' editorType='dxTextArea'>
-                <Label text='Inspection Notes' />
               </Item>
             </GroupItem>
           </Form>
@@ -400,26 +264,19 @@ export class Feedback extends Component {
             <SearchPanel visible={true} />
             <GroupPanel visible={true} />
             <Paging defaultPageSize={6} />
-            <Column dataField='Concerns' />
-            <Column dataField='Answer' caption='Answer'>
-              <Lookup
-                dataSource={this.AnswerResult}
-                valueExpr='ID'
-                displayExpr='Name'
-              />
-            </Column>
-            <Column dataField='remark' caption='Remark'></Column>
+            <Column dataField='Name' />
+            <Column dataField='Concerns' editorOptions={{ readOnly: true }} />
             <Column
               caption={"Actions"}
               type='buttons'
               buttons={[
                 "edit",
-                // {
-                //   hint: "Save",
-                //   icon: "save",
-                //   visible: true,
-                //   // onClick: this.onUploadUploadAttchmentClick,
-                // },
+                {
+                  hint: "Save",
+                  icon: "upload",
+                  visible: true,
+                  // onClick: this.onUploadUploadAttchmentClick,
+                },
                 // {
                 //   hint: "View",
                 //   icon: "fa fa-eye",
@@ -462,11 +319,11 @@ export class Feedback extends Component {
             <SearchPanel visible={true} />
             <GroupPanel visible={true} />
             <Paging defaultPageSize={6} />
-            <Column dataField='AttachmentName' />
-            {/* <Column
+            <Column dataField='Name' />
+            <Column
               dataField='AttachmentName'
               editorOptions={{ readOnly: true }}
-            /> */}
+            />
             <Column
               caption={"Actions"}
               type='buttons'
