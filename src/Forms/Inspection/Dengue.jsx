@@ -155,7 +155,7 @@ export class Feedback extends Component {
                 <RequiredRule message='Field is required to fill' />
               </Item> */}
               <Item dataField='FillDate' editorType='dxDateBox'>
-                <Label text='Current Date' />
+                <Label text='Submission Date' />
               </Item>
             </GroupItem>
             <GroupItem caption='Customer Details' colCount={2}>
@@ -294,7 +294,7 @@ export class Feedback extends Component {
               <Item dataField='Remark8' editorType='dxTextArea'>
                 <Label text='Remark' />
               </Item>
-              {/* <Item
+              <Item
                 dataField='Question9'
                 editorType='dxSelectBox'
                 editorOptions={{
@@ -305,7 +305,7 @@ export class Feedback extends Component {
                 }}
               >
                 <Label text='How is household waste disposed of?' />
-              </Item> */}
+              </Item>
 
               <Item
                 dataField='Question10'
@@ -401,7 +401,7 @@ export class Feedback extends Component {
             <GroupPanel visible={true} />
             <Paging defaultPageSize={6} />
             <Column dataField='Concerns' />
-            <Column dataField='Answer' caption='Answer'>
+            <Column dataField='Answer' caption='Concerns'>
               <Lookup
                 dataSource={this.AnswerResult}
                 valueExpr='ID'
@@ -414,12 +414,12 @@ export class Feedback extends Component {
               type='buttons'
               buttons={[
                 "edit",
-                // {
-                //   hint: "Save",
-                //   icon: "save",
-                //   visible: true,
-                //   // onClick: this.onUploadUploadAttchmentClick,
-                // },
+                {
+                  hint: "Save",
+                  icon: "save",
+                  visible: true,
+                  // onClick: this.onUploadUploadAttchmentClick,
+                },
                 // {
                 //   hint: "View",
                 //   icon: "fa fa-eye",

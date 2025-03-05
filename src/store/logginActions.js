@@ -78,7 +78,7 @@ export const fetchLoginData = (UserID, CurrentPassword) => {
       // Mock User Data
       const mockUser = {
         UserID,
-        Name: "Theshani",
+        Name: "Thehansi",
         Role: "Admin",
         Active: 1,
       };

@@ -21,7 +21,7 @@ export default {
       id: "group-phi",
       title: "PHI",
       type: "group",
-      icon: "feather icon-home",
+      icon: "icon-navigation",
       DocumentName: "PHI",
       children: [
         {
@@ -31,6 +31,23 @@ export default {
           icon: "feather icon-home",
           url: "/forms/inspection/phi",
           DocumentName: "PHI",
+        },
+      ],
+    },
+    {
+      id: "group-dgu",
+      title: "DGU",
+      type: "group",
+      icon: "feather icon-home",
+      DocumentName: "DGU",
+      children: [
+        {
+          id: 10,
+          title: "DGU",
+          type: "item",
+          icon: "feather icon-copy",
+          url: "/forms/dgu/form-list",
+          DocumentName: "DGU",
         },
       ],
     },

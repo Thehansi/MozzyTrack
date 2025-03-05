@@ -24,6 +24,9 @@ const UsersGroup = React.lazy(() => import("./Forms/Admin/UserGroup"));
 
 //PHI
 const phi = React.lazy(() => import("./Forms/Inspection/Dengue"));
+//DGU
+const dgu = React.lazy(() => import("./Forms/DGU/FormList"));
+//report
 const reports = React.lazy(() => import("./Forms/Report/Report"));
 const routs = [
   {
@@ -38,11 +41,19 @@ const routs = [
     name: "Notification",
     component: notification,
   },
+  //phi
   {
     path: "/forms/inspection/phi",
     exact: true,
     name: "PHI",
     component: phi,
+  },
+  //dgu
+  {
+    path: "/forms/dgu/form-list",
+    exact: true,
+    name: "DGU",
+    component: dgu,
   },
   //Admin
   {

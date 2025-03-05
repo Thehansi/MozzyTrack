@@ -278,7 +278,6 @@ const User = () => {
   };
 
   const PasswordCell = ({ value }) => {
-
     const maskedValue = "*".repeat(value.length);
 
     return (
@@ -297,23 +296,23 @@ const User = () => {
 
   return (
     <div>
-      <Card title="User">
+      <Card title='User'>
         <Form ref={FormRef} formData={state.jForm}>
-          <GroupItem caption="User Information" colCount={2}>
+          <GroupItem caption='User Information' colCount={2}>
             <GroupItem>
               <Item
-                dataField="UserName"
+                dataField='UserName'
                 editorOptions={{
                   readOnly: state.boolValue,
                 }}
-                className="w-50"
+                className='w-50'
               >
-                <RequiredRule message="Field required" />
-                <Label text="Username"></Label>
+                <RequiredRule message='Field required' />
+                <Label text='Username'></Label>
               </Item>
               <Item
-                dataField="UserGroup"
-                editorType="dxSelectBox"
+                dataField='UserGroup'
+                editorType='dxSelectBox'
                 editorOptions={{
                   searchEnabled: true,
                   dataSource: groups,
@@ -321,32 +320,32 @@ const User = () => {
                   displayExpr: "Discription",
                 }}
               >
-                <RequiredRule message="Field required" />
-                <Label text="User Group"></Label>
+                <RequiredRule message='Field required' />
+                <Label text='User Group'></Label>
               </Item>
               <Item
-                dataField="Password"
+                dataField='Password'
                 editorOptions={{
                   mode: "password",
                   // minLength: 8,
                 }}
               >
-                <RequiredRule message="Field required" />
-                <Label text="Password"></Label>
+                <RequiredRule message='Field required' />
+                <Label text='Password'></Label>
               </Item>
               <Item
-                dataField="ConfirmPassword"
+                dataField='ConfirmPassword'
                 editorOptions={{
                   mode: "password",
                   minLength: 8,
                 }}
               >
-                <RequiredRule message="Field required" />
-                <Label text="Confirm Password"></Label>
+                <RequiredRule message='Field required' />
+                <Label text='Confirm Password'></Label>
               </Item>
               <Item
-                dataField="Branch"
-                editorType="dxSelectBox"
+                dataField='Branch'
+                editorType='dxSelectBox'
                 editorOptions={{
                   searchEnabled: true,
                   dataSource: branches,
@@ -354,11 +353,11 @@ const User = () => {
                   displayExpr: "Discription",
                 }}
               >
-                <Label text="Branch"></Label>
+                <Label text='Province'></Label>
               </Item>
               <Item
-                dataField="Department"
-                editorType="dxSelectBox"
+                dataField='Department'
+                editorType='dxSelectBox'
                 editorOptions={{
                   searchEnabled: true,
                   dataSource: departments,
@@ -366,41 +365,41 @@ const User = () => {
                   displayExpr: "Discription",
                 }}
               >
-                <RequiredRule message="Field required" />
-                <Label text="Department"></Label>
+                <RequiredRule message='Field required' />
+                <Label text='District'></Label>
               </Item>
-              <Item dataField="Email" caption="Email">
-                <RequiredRule message="Field required" />
-                <Label text="Email"></Label>
+              <Item dataField='Email' caption='Email'>
+                <RequiredRule message='Field required' />
+                <Label text='Email'></Label>
               </Item>
 
-              <Item dataField="ContactNo">
+              <Item dataField='ContactNo'>
                 <NumberBox
                   onInput={handleInput}
                   showSpinButtons={false}
                   value={number}
                 ></NumberBox>
-                <Label text="Contact No"></Label>
+                <Label text='Contact No'></Label>
               </Item>
-              <Item dataField="Active" editorType="dxCheckBox"></Item>
+              <Item dataField='Active' editorType='dxCheckBox'></Item>
             </GroupItem>
             <GroupItem></GroupItem>
           </GroupItem>
         </Form>
         <br></br>
 
-        <Navbar bg="light" variant="light">
+        <Navbar bg='light' variant='light'>
           <Button
-            variant="secondary"
-            icon="feather icon-layers"
+            variant='secondary'
+            icon='feather icon-layers'
             onClick={handleSave}
             disabled={isAdd}
           >
             Save
           </Button>
           <Button
-            variant="secondary"
-            icon="feather icon-layers"
+            variant='secondary'
+            icon='feather icon-layers'
             onClick={handleClear}
             disabled={isAdd}
           >
@@ -408,7 +407,7 @@ const User = () => {
           </Button>
         </Navbar>
       </Card>
-      <Card title="User Group List">
+      <Card title='User Group List'>
         <div>
           <DataGrid
             dataSource={state.users}
@@ -423,37 +422,37 @@ const User = () => {
             <SearchPanel visible={true} />
             <Paging defaultPageSize={20} />
 
-            <Column dataField="UserName" caption="User Name" />
-            <Column dataField="UserGroup" caption="User Group">
+            <Column dataField='UserName' caption='User Name' />
+            <Column dataField='UserGroup' caption='User Group'>
               <Lookup
                 dataSource={groups}
-                valueExpr="GroupCode"
-                displayExpr="Discription"
+                valueExpr='GroupCode'
+                displayExpr='Discription'
               />
             </Column>
             <Column
-              dataField="Password"
-              caption="Password"
+              dataField='Password'
+              caption='Password'
               cellRender={PasswordCell}
             />
             <Column
-              dataField="ConfirmPassword"
-              caption="Confirm Password"
+              dataField='ConfirmPassword'
+              caption='Confirm Password'
               cellRender={PasswordCell}
             />
-            <Column dataField="Branch" caption="Branch" />
-            <Column dataField="Department" caption="Department" />
-            <Column dataField="Email" caption="Email" />
-            <Column dataField="ContactNo" caption="Contact No" />
-            <Column dataField="Active" caption="Active" dataType="bit" />
+            <Column dataField='Branch' caption='Province' />
+            <Column dataField='Department' caption='District' />
+            <Column dataField='Email' caption='Email' />
+            <Column dataField='ContactNo' caption='Contact No' />
+            <Column dataField='Active' caption='Active' dataType='bit' />
           </DataGrid>
           <br></br>
         </div>
       </Card>
 
       <LoadPanel
-        message="Processing.... Please, wait..."
-        shadingColor="rgba(0,0,0,0.4)"
+        message='Processing.... Please, wait...'
+        shadingColor='rgba(0,0,0,0.4)'
         showIndicator={true}
         shading={true}
         showPane={true}

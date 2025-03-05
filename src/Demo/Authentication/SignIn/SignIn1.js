@@ -96,7 +96,7 @@ class SignUp1 extends Component {
                   >
                     Login
                   </button>
-                  <p className='mb-0 text-muted'>© 2025 Theshani</p>
+                  <p className='mb-0 text-muted'>© 2025 Thehansi Gunaratne</p>
                   <p className='mb-0 text-muted'>Version 1.0.0</p>
                 </div>
               </div>
