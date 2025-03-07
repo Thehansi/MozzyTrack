@@ -26,7 +26,7 @@ import UploadAttchment from "../UploadAttachmentTemplate/UploadAttchment";
 import { connect } from "react-redux";
 import { RadioGroup } from "devextreme-react/radio-group";
 
-export class Feedback extends Component {
+export class Dengue extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -53,9 +53,9 @@ export class Feedback extends Component {
       { ID: 2, Name: "Inactive" },
       { ID: 3, Name: "Completed" },
     ];
-    this.jFeedBAckType = [
-      { ID: 1, Name: "Feed Back Form" },
-      { ID: 2, Name: "Server" },
+    this.jSituationType = [
+      { ID: 1, Name: "No Complaint" },
+      { ID: 2, Name: "Complaint Issued" },
     ];
     this.AnswerResult = [
       { ID: 1, Name: "Yes" },
@@ -109,7 +109,7 @@ export class Feedback extends Component {
   render() {
     return (
       <div>
-        <Card title='Feedback'>
+        <Card title='Inspection Form'>
           <Form
             onContentReady={this.validateForm}
             ref={this.FormRef}
@@ -135,7 +135,7 @@ export class Feedback extends Component {
                 dataField='ImpotentType'
                 editorType='dxSelectBox'
                 editorOptions={{
-                  items: this.jFeedBAckType,
+                  items: this.jSituationType,
                   valueExpr: "ID",
                   displayExpr: "Name",
                 }}
@@ -158,7 +158,7 @@ export class Feedback extends Component {
                 <Label text='Submission Date' />
               </Item>
             </GroupItem>
-            <GroupItem caption='Customer Details' colCount={2}>
+            <GroupItem caption='Household Owner Details' colCount={2}>
               <Item
                 dataField='CustomerName'
                 // editorType='dxSelectBox'
@@ -170,7 +170,7 @@ export class Feedback extends Component {
                 // }}
               >
                 <RequiredRule message='Field is required to fill' />
-                <Label text='Customer Name' />
+                <Label text='Household Owner Name' />
               </Item>
 
               <Item dataField='CusIdentificationNo'>
@@ -401,7 +401,7 @@ export class Feedback extends Component {
             <GroupPanel visible={true} />
             <Paging defaultPageSize={6} />
             <Column dataField='Concerns' />
-            <Column dataField='Answer' caption='Concerns'>
+            <Column dataField='Answer' caption='Status'>
               <Lookup
                 dataSource={this.AnswerResult}
                 valueExpr='ID'
@@ -549,5 +549,5 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps)(Feedback);
+export default connect(mapStateToProps)(Dengue);
 //export default Feedback;

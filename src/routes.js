@@ -25,7 +25,11 @@ const UsersGroup = React.lazy(() => import("./Forms/Admin/UserGroup"));
 //PHI
 const phi = React.lazy(() => import("./Forms/Inspection/Dengue"));
 //DGU
-const dgu = React.lazy(() => import("./Forms/DGU/FormList"));
+const dgu = React.lazy(() => import("./Forms/NDCU/NDCU"));
+//Household
+const houseHold = React.lazy(() => import("./Forms/UserForm/UserForm"));
+//Chat Box
+const chatBox = React.lazy(() => import("./Forms/ChatBox/ChatBox"));
 //report
 const reports = React.lazy(() => import("./Forms/Report/Report"));
 const routs = [
@@ -54,6 +58,20 @@ const routs = [
     exact: true,
     name: "DGU",
     component: dgu,
+  },
+  //household
+  {
+    path: "/forms/user/user-form",
+    exact: true,
+    name: "household",
+    component: houseHold,
+  },
+  //household
+  {
+    path: "/forms/chatBox/chat",
+    exact: true,
+    name: "chatBox",
+    component: chatBox,
   },
   //Admin
   {

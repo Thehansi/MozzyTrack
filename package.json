@@ -4,6 +4,7 @@
   "private": true,
   "homepage": "http://127.0.0.1:3000",
   "dependencies": {
+    "@ant-design/icons": "^5.6.1",
     "@devexpress/analytics-core": "^23.2.6",
     "axios": "^0.19.2",
     "body-parser": "^1.20.2",
@@ -28,6 +29,7 @@
     "react": "^16.14.0",
     "react-bootstrap": "^1.4.0",
     "react-bootstrap-date-picker": "^5.1.0",
+    "react-chat-engine": "^1.11.28",
     "react-datepicker": "^6.0.0",
     "react-dom": "^16.14.0",
     "react-floating-action-button": "^1.0.5",
