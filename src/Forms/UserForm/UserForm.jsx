@@ -125,7 +125,7 @@ export class Household extends Component {
             <Paging defaultPageSize={6} />
             <Column dataField='ComplainID' />
             <Column dataField='SituationType' />
-            <Column dataField='Date' />
+            <Column dataField='Date' caption='Complain Date' dataType='date' />
             <Column dataField='HouseholdName' />
             <Column dataField='ImmediateActionTaken' />
             <Column dataField='NextFollowUpDate' />

@@ -7,7 +7,7 @@ export class About extends Component {
       <Card className='text-center' bg={"secondary"} text={"white"}>
         <Card.Body>
           <Card.Title>MozziTrack</Card.Title>
-          <Card.Text>© 2025 Thehansi Gunaratne</Card.Text>
+          <Card.Text>© 2025 Thehansi</Card.Text>
           <Card.Text>Version 1.0.0</Card.Text>
         </Card.Body>
       </Card>

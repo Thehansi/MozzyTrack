@@ -18,14 +18,14 @@ import DataGrid, {
   Lookup,
   Popup,
 } from "devextreme-react/data-grid";
-import { FileUploader } from "devextreme-react";
 import notify from "devextreme/ui/notify";
 import Swal from "sweetalert2";
 import axios from "axios";
 import { connect } from "react-redux";
 import SelectBox from "devextreme-react/select-box";
-import { TextBox } from "devextreme-react/text-box";
-import { Button } from "devextreme-react/button";
+import Province from "../CommanData/Province";
+import Districts from "../CommanData/District";
+import DivisionalSecretariats from "../CommanData/DivisionalSecretariats";
 
 export class NDCU extends Component {
   constructor(props) {
@@ -57,63 +57,6 @@ export class NDCU extends Component {
       { ID: 2, Name: "Inactive" },
       { ID: 3, Name: "Completed" },
     ];
-    this.jProvince = [
-      { ID: 1, Name: "Western Province" },
-      { ID: 2, Name: "Central Province" },
-      { ID: 3, Name: "Southern Province" },
-      { ID: 4, Name: "Northern Province" },
-      { ID: 5, Name: "Eastern Province" },
-      { ID: 6, Name: "North Western Province" },
-      { ID: 7, Name: "North Central Province" },
-      { ID: 8, Name: "Uva Province" },
-      { ID: 9, Name: "Sabaragamuwa Province" },
-    ];
-
-    this.jDistricts = {
-      1: [
-        { ID: 1, Name: "Colombo" },
-        { ID: 2, Name: "Gampaha" },
-        { ID: 3, Name: "Kalutara" },
-      ],
-      2: [
-        { ID: 4, Name: "Kandy" },
-        { ID: 5, Name: "Matale" },
-        { ID: 6, Name: "Nuwara Eliya" },
-      ],
-      3: [
-        { ID: 7, Name: "Galle" },
-        { ID: 8, Name: "Matara" },
-        { ID: 9, Name: "Hambantota" },
-      ],
-      4: [
-        { ID: 10, Name: "Jaffna" },
-        { ID: 11, Name: "Kilinochchi" },
-        { ID: 12, Name: "Mannar" },
-        { ID: 13, Name: "Vavuniya" },
-        { ID: 14, Name: "Mullaitivu" },
-      ],
-      5: [
-        { ID: 15, Name: "Trincomalee" },
-        { ID: 16, Name: "Batticaloa" },
-        { ID: 17, Name: "Ampara" },
-      ],
-      6: [
-        { ID: 18, Name: "Kurunegala" },
-        { ID: 19, Name: "Puttalam" },
-      ],
-      7: [
-        { ID: 20, Name: "Anuradhapura" },
-        { ID: 21, Name: "Polonnaruwa" },
-      ],
-      8: [
-        { ID: 22, Name: "Badulla" },
-        { ID: 23, Name: "Monaragala" },
-      ],
-      9: [
-        { ID: 24, Name: "Ratnapura" },
-        { ID: 25, Name: "Kegalle" },
-      ],
-    };
 
     this.jPhi = [];
     this.ApprovalStatus = [
@@ -134,7 +77,15 @@ export class NDCU extends Component {
     const provinceID = e.value;
     this.setState({
       selectedProvince: provinceID,
-      filteredDistricts: this.jDistricts[provinceID] || [],
+      filteredDistricts: Districts[provinceID] || [],
+    });
+  };
+
+  handleDistrictChange = (e) => {
+    const districtID = e.value;
+    this.setState({
+      selectedDistrict: districtID,
+      filteredDivSectors: DivisionalSecretariats[districtID] || [],
     });
   };
 
@@ -151,7 +102,8 @@ export class NDCU extends Component {
               <Item dataField='Province'>
                 <Label text='Province' />
                 <SelectBox
-                  items={this.jProvince}
+                  searchEnabled={true}
+                  items={Province}
                   valueExpr='ID'
                   displayExpr='Name'
                   onValueChanged={this.handleProvinceChange}
@@ -162,10 +114,23 @@ export class NDCU extends Component {
               <Item dataField='District'>
                 <Label text='District' />
                 <SelectBox
+                  searchEnabled={true}
                   items={this.state.filteredDistricts}
                   valueExpr='ID'
                   displayExpr='Name'
                   disabled={!this.state.selectedProvince}
+                  onValueChanged={this.handleDistrictChange}
+                />
+              </Item>
+
+              <Item dataField='DivSectors'>
+                <Label text='Divisional Sectors' />
+                <SelectBox
+                  searchEnabled={true}
+                  items={this.state.filteredDivSectors}
+                  valueExpr='ID'
+                  displayExpr='Name'
+                  disabled={!this.state.selectedDistrict}
                 />
               </Item>
               <Item
@@ -209,7 +174,7 @@ export class NDCU extends Component {
             <Paging defaultPageSize={6} />
             <Column dataField='FormID' />
             <Column dataField='SituationType' />
-            <Column dataField='Date' />
+            <Column dataField='Date' dataType='date' />
             <Column dataField='CustomerName' />
             <Column dataField='ImmediateActionTaken' />
             <Column dataField='NextFollowUpDate' />

@@ -401,7 +401,7 @@ export class Dengue extends Component {
             <GroupPanel visible={true} />
             <Paging defaultPageSize={6} />
             <Column dataField='Concerns' />
-            <Column dataField='Answer' caption='Status'>
+            <Column dataField='Answer' caption='Concerns'>
               <Lookup
                 dataSource={this.AnswerResult}
                 valueExpr='ID'

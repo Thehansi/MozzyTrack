@@ -28,6 +28,9 @@ import { NumberBox } from "devextreme-react/number-box";
 import { SelectBox, DateBox } from "devextreme-react";
 import { Label } from "devextreme-react/form";
 import { Break } from "devextreme-react/cjs/range-selector";
+import Province from "../CommanData/Province";
+import Districts from "../CommanData/District";
+import DivisionalSecretariats from "../CommanData/DivisionalSecretariats";
 
 const User = () => {
   const [user, setUser] = useState([]);
@@ -37,9 +40,15 @@ const User = () => {
   const [branches, setBranches] = useState([]);
   const [departments, setDepartments] = useState([]);
 
-  const [selectedGroup, setSelectedGroup] = useState(null);
-  const [selectedBranch, setSelectedBranch] = useState(null);
-  const [selectedDepartment, setSelectedDepartment] = useState(null);
+  // const [selectedGroup, setSelectedGroup] = useState(null);
+  // const [selectedBranch, setSelectedBranch] = useState(null);
+  // const [selectedDepartment, setSelectedDepartment] = useState(null);
+
+  const [selectedProvince, setSelectedProvince] = useState(null);
+  const [selectedDistrict, setSelectedDistrict] = useState(null);
+  const [selectedDivSect, setSelectedDivSect] = useState(null);
+  const [filteredDistricts, setFilteredDistricts] = useState([]);
+  const [filteredDivSectors, setFilteredDivSectors] = useState([]);
 
   const [isAdd, setISAdd] = useState(true);
   const [isEdit, setISEdit] = useState(true);
@@ -73,6 +82,23 @@ const User = () => {
   useEffect(() => {
     fetchGroupDetails();
   }, []);
+
+  useEffect(() => {
+    if (selectedProvince) {
+      const districts = Districts[selectedProvince] || [];
+      setFilteredDistricts(districts);
+      setSelectedDistrict(null); // Reset selected district
+      setFilteredDivSectors([]); // Reset divisional sectors
+    }
+  }, [selectedProvince]);
+
+  useEffect(() => {
+    if (selectedDistrict) {
+      const divSectors = DivisionalSecretariats[selectedDistrict] || [];
+      setFilteredDivSectors(divSectors);
+      setSelectedDivSect(null); // Reset selected divisional sector
+    }
+  }, [selectedDistrict]);
 
   const fetchGroupDetails = async () => {
     const authData = JSON.parse(localStorage.getItem("user"));
@@ -344,29 +370,45 @@ const User = () => {
                 <Label text='Confirm Password'></Label>
               </Item>
               <Item
-                dataField='Branch'
+                dataField='Province'
                 editorType='dxSelectBox'
                 editorOptions={{
                   searchEnabled: true,
-                  dataSource: branches,
-                  valueExpr: "BranchCode",
-                  displayExpr: "Discription",
+                  dataSource: Province,
+                  valueExpr: "ID",
+                  displayExpr: "Name",
+                  onValueChanged: (e) => setSelectedProvince(e.value),
                 }}
               >
                 <Label text='Province'></Label>
               </Item>
               <Item
-                dataField='Department'
+                dataField='District'
                 editorType='dxSelectBox'
                 editorOptions={{
                   searchEnabled: true,
-                  dataSource: departments,
-                  valueExpr: "DepartmentCode",
-                  displayExpr: "Discription",
+                  dataSource: filteredDistricts,
+                  valueExpr: "ID",
+                  displayExpr: "Name",
+                  onValueChanged: (e) => setSelectedDistrict(e.value),
                 }}
               >
                 <RequiredRule message='Field required' />
                 <Label text='District'></Label>
+              </Item>
+              <Item
+                dataField='DivSect'
+                editorType='dxSelectBox'
+                editorOptions={{
+                  searchEnabled: true,
+                  dataSource: filteredDivSectors,
+                  valueExpr: "ID",
+                  displayExpr: "Name",
+                  onValueChanged: (e) => setSelectedDivSect(e.value),
+                }}
+              >
+                <RequiredRule message='Field required' />
+                <Label text='Divisional Secretariats'></Label>
               </Item>
               <Item dataField='Email' caption='Email'>
                 <RequiredRule message='Field required' />
