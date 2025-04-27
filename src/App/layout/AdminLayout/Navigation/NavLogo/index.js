@@ -16,7 +16,12 @@ const navLogo = (props) => {
           {/* <div className="b-bg">
             <i className="feather icon-award" />
           </div> */}
-          <span className='b-title'>MozziTrack</span>
+          <span
+            className='b-title'
+            style={{ color: "#A60303", fontSize: "24px", fontWeight: "bold" }}
+          >
+            MozziTrack
+          </span>
         </a>
         <a
           // href={DEMO.BLANK_LINK}

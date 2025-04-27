@@ -150,7 +150,7 @@ class MainCard extends Component {
         {cardHeader}
         <Collapse in={!this.state.collapseCard}>
           <div>
-            <Card.Body style={{ backgroundColor: "rgb(185, 210, 214)" }}>
+            <Card.Body style={{ backgroundColor: "rgb(149, 229, 149)" }}>
               {this.props.children}
             </Card.Body>
           </div>

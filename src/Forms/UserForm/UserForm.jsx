@@ -49,7 +49,7 @@ export class Household extends Component {
       messages: [], // Ensure messages is an array
       newMessage: "",
     };
-    this.sendMessage = this.sendMessage.bind(this);
+    // this.sendMessage = this.sendMessage.bind(this);
     this.FormRef = React.createRef();
     this.FormRef2 = React.createRef();
     this.jStatusList = [
@@ -58,34 +58,42 @@ export class Household extends Component {
       { ID: 3, Name: "Completed" },
     ];
   }
-  get FormLayout() {
-    return this.FormRef.current.instance;
-  }
-  get FormLayout2() {
-    return this.FormRef2.current.instance;
-  }
+  // get FormLayout() {
+  //   return this.FormRef.current.instance;
+  // }
+  // get FormLayout2() {
+  //   return this.FormRef2.current.instance;
+  // }
 
-  handleProvinceChange = (e) => {
-    const provinceID = e.value;
-    this.setState({
-      selectedProvince: provinceID,
-      filteredDistricts: this.jDistricts[provinceID] || [],
-    });
+  // sendMessage() {
+  //   if (this.state.newMessage.trim() === "") return;
+
+  //   const newMsg = {
+  //     user: "You", // You can replace this with a dynamic user
+  //     text: this.state.newMessage,
+  //   };
+
+  //   this.setState((prevState) => ({
+  //     messages: [...prevState.messages, newMsg],
+  //     newMessage: "", // Clear input field after sending
+  //   }));
+  // }
+
+  componentDidMount = () => {
+    axios
+      .all([
+        axios.get("/api/getUserDetails", {
+          params: { userName: "sds" },
+        }),
+      ])
+      .then(
+        axios.spread(async (req) => {
+          this.setState({
+            jFormList: req.data,
+          });
+        })
+      );
   };
-
-  sendMessage() {
-    if (this.state.newMessage.trim() === "") return;
-
-    const newMsg = {
-      user: "You", // You can replace this with a dynamic user
-      text: this.state.newMessage,
-    };
-
-    this.setState((prevState) => ({
-      messages: [...prevState.messages, newMsg],
-      newMessage: "", // Clear input field after sending
-    }));
-  }
 
   render() {
     return (
@@ -103,7 +111,7 @@ export class Household extends Component {
           </Form>
           <DataGrid
             id='grid-list'
-            keyExpr='ConcernsID'
+            // keyExpr='ConcernsID'
             showBorders={true}
             wordWrapEnabled={true}
             allowSearch={true}
@@ -113,23 +121,31 @@ export class Household extends Component {
           >
             <Editing
               mode='popup'
-              allowDeleting={true}
-              allowAdding={true}
-              allowUpdating={true}
-              useIcons={true}
+              // allowDeleting={true}
+              // allowAdding={true}
+              // allowUpdating={true}
+              // useIcons={true}
             >
               <Popup title='Complain Details List' showTitle={true}></Popup>
             </Editing>
             <SearchPanel visible={true} />
             <GroupPanel visible={true} />
             <Paging defaultPageSize={6} />
-            <Column dataField='ComplainID' />
-            <Column dataField='SituationType' />
-            <Column dataField='Date' caption='Complain Date' dataType='date' />
-            <Column dataField='HouseholdName' />
-            <Column dataField='ImmediateActionTaken' />
-            <Column dataField='NextFollowUpDate' />
-            <Column dataField='NICNo' />
+            <Column dataField='FormID' caption='Complain ID' />
+            <Column dataField='CusIdentificationNo' caption='NIC No' />
+            <Column dataField='ImpotentType' caption='Situation Type' />
+            <Column
+              dataField='FillDate'
+              caption='Complain Date'
+              dataType='date'
+            />
+            <Column dataField='HouseOwnerName' caption='House Owner Name' />
+            <Column dataField='Question13' caption='Immediate Action Taken' />
+            <Column
+              dataField='followUpDate'
+              caption='follow UpDate'
+              dataType='date'
+            />
           </DataGrid>
         </Card>
       </div>

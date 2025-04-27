@@ -31,12 +31,16 @@ export class Dengue extends Component {
     super(props);
     this.state = {
       FeedbackID: 0,
-      jFeedback: {},
+      jFeedback: {
+        FormID: this.generateFormID(),
+      },
       DocReadOnly: false,
       jlCustomers: [],
-      jlUser: [],
-      jFeedbackAttachment: [],
+      jPHI: [],
+      ApplicationAttachment: [],
       UploadAttchment: false,
+      jFeedbackAttachment: [],
+      jFeedbackAConcerns: [],
       FileInfo: {},
       DocViewList: false,
       SelectedID: 0,
@@ -49,34 +53,34 @@ export class Dengue extends Component {
     this.FormRef = React.createRef();
     this.FormRef2 = React.createRef();
     this.jStatusList = [
-      { ID: 1, Name: "Active" },
-      { ID: 2, Name: "Inactive" },
-      { ID: 3, Name: "Completed" },
+      { ID: "1", Name: "Active" },
+      { ID: "2", Name: "Inactive" },
+      { ID: "3", Name: "Completed" },
     ];
     this.jSituationType = [
-      { ID: 1, Name: "No Complaint" },
-      { ID: 2, Name: "Complaint Issued" },
+      { ID: "1", Name: "No Complaint" },
+      { ID: "2", Name: "Complaint Issued" },
     ];
     this.AnswerResult = [
-      { ID: 1, Name: "Yes" },
-      { ID: 2, Name: "No" },
+      { ID: "1", Name: "Yes" },
+      { ID: "2", Name: "No" },
       // { ID: 3, Name: "Good" },
       // { ID: 4, Name: "Better" },
       // { ID: 5, Name: "Best" },
     ];
 
     this.RiskLevel = [
-      { ID: 1, Name: "Low" },
-      { ID: 2, Name: "Medium" },
-      { ID: 3, Name: "High" },
+      { ID: "1", Name: "Low" },
+      { ID: "2", Name: "Medium" },
+      { ID: "3", Name: "High" },
     ];
 
     this.waseDisposed = [
-      { ID: 1, Name: "General Waste" },
-      { ID: 2, Name: "Recycling " },
-      { ID: 3, Name: "Food Waste " },
-      { ID: 4, Name: "Hazardous Waste " },
-      { ID: 5, Name: "Garden Waste " },
+      { ID: "1", Name: "General Waste" },
+      { ID: "2", Name: "Recycling " },
+      { ID: "3", Name: "Food Waste " },
+      { ID: "4", Name: "Hazardous Waste " },
+      { ID: "5", Name: "Garden Waste " },
     ];
 
     this.mimeTypes = {
@@ -106,6 +110,162 @@ export class Dengue extends Component {
     return this.FormRef2.current.instance;
   }
 
+  generateFormID() {
+    const now = new Date();
+    return (
+      "FORM-" +
+      now.getFullYear().toString() +
+      (now.getMonth() + 1).toString().padStart(2, "0") +
+      now.getDate().toString().padStart(2, "0") +
+      now.getHours().toString().padStart(2, "0") +
+      now.getMinutes().toString().padStart(2, "0") +
+      now.getSeconds().toString().padStart(2, "0")
+    );
+  }
+
+  onSaveClick = () => {
+    Swal.fire({
+      type: "info",
+      showCancelButton: true,
+      text: "Do you want to save ?",
+      confirmButtonText: "Yes",
+      cancelButtonText: "No",
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+    }).then((res) => {
+      if (true) {
+        if (res.value) {
+          try {
+            axios
+              .post("/api/addDengueForm", {
+                Feedback: JSON.stringify(this.state.jFeedback),
+                FeedbackAConcerns: JSON.stringify(
+                  this.state.jFeedbackAConcerns
+                ),
+                ApplicationAttachment: JSON.stringify(
+                  this.state.ApplicationAttachment
+                ),
+              })
+              .then((response) => {
+                Swal.fire({
+                  icon: "success",
+                  title: "Success",
+                  text: "User details saved successfully!",
+                }).then(async (res) => {
+                  // const getUsers = await axios.get("/api/getalluser");
+                  // console.log("getUsers", getUsers);
+                  // setState((prevState) => ({
+                  //   ...prevState,
+                  //   users: getUsers.data,
+                  // }));
+                  // setNumber(0);
+                  // setState((prevState) => ({
+                  //   ...prevState,
+                  //   jForm: {},
+                  // }));
+                });
+                //this.onLoadPanelHiding("Successfully Updated", "success");
+                // let _newFeedbackID = response.data[0].NewFeedbackID;
+                // if (_newFeedbackID != 0) {
+                //   this.onLoadPanelHiding("Successfully Saved", "success");
+                //   this.OnClearForm();
+                // } else if (_newFeedbackID == 0) {
+                //   this.onLoadPanelHiding("Successfully Updated", "success");
+                //   this.OnClearForm();
+                // }
+              })
+              .catch((error) => {
+                console.error(error);
+                this.onLoadPanelHiding("Something went wrong", "error");
+              });
+          } catch (error) {
+            console.log(error);
+          }
+        }
+      }
+      // else if (res.dismiss == "cancel") {
+      //   this.setState({ LoadPanelVisible: false });
+      // } else if (res.dismiss == "esc") {
+      // } else {
+      //   this.onLoadPanelHiding("Enter Required Details", "error");
+      // }
+    });
+  };
+
+  onUploadUploadAttchmentClick = (e, FileName, FilePath, AttachmentID) => {
+    let Id = 0;
+
+    this.setState({ UploadAttchment: !this.state.UploadAttchment }, () => {
+      if (this.state.UploadAttchment) {
+        Id = e.row.data.AttachmentID;
+
+        this.setState({
+          FileInfo: e.row.data,
+        });
+      }
+      let FileName_ = FileName + "";
+      let Count = 0;
+      if (!this.state.ListViewing) {
+        for (var i = 0; i < this.state.ApplicationAttachment.length; i++) {
+          if (
+            this.state.ApplicationAttachment[i].AttachmentID == AttachmentID
+          ) {
+            Count = i;
+          }
+        }
+        console.log("Count", Count);
+        this.state.ApplicationAttachment[Count].AttachmentFilePath =
+          FilePath + "";
+        this.state.ApplicationAttachment[Count].AttachmentName = e;
+        this.setState((prevState) => ({
+          ApplicationAttachment: this.state.ApplicationAttachment,
+        }));
+      }
+    });
+  };
+
+  onAppViewClick = async (e) => {
+    if (e.row.data.AttachmentFilePath !== undefined) {
+      const filePath = await axios.get("/api/viewFile", {
+        responseType: "arraybuffer",
+        params: { FilePath: e.row.data.AttachmentFilePath },
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      let filePathValue;
+      let fileType = "";
+      if (filePath.config.params.FilePath !== undefined) {
+        filePathValue = filePath.config.params.FilePath;
+        const parts = filePathValue.split("\\");
+        const fileName = parts.pop();
+        let fullPath = fileName.split(".").pop().toLowerCase();
+        fileType = this.getFileType(fullPath);
+      }
+      if (filePath.data !== null || filePath.data !== undefined) {
+        const reqFile = new Blob([filePath.data], {
+          type: fileType,
+        });
+
+        const fileURL = URL.createObjectURL(reqFile);
+        const newTab = window.open(fileURL, "_blank");
+      }
+    } else {
+      this.onLoadPanelHiding("Please select the file", "error");
+    }
+  };
+
+  componentDidMount = () => {
+    axios.all([axios.get("/api/gePHIDetails")]).then(
+      axios.spread(async (req) => {
+        console.log("eeee", req.data);
+        this.setState({
+          jPHI: req.data,
+        });
+      })
+    );
+  };
+
   render() {
     return (
       <div>
@@ -124,9 +284,12 @@ export class Dengue extends Component {
               ></Item>
               <Item
                 dataField='PhiID'
-                // editorOptions={{
-                //   readOnly: true,
-                // }}
+                editorType='dxSelectBox'
+                editorOptions={{
+                  items: this.state.jPHI,
+                  valueExpr: "ID",
+                  displayExpr: "Name",
+                }}
               >
                 <Label text='PHI ID' />
                 <RequiredRule message='Field is required to fill' />
@@ -160,7 +323,7 @@ export class Dengue extends Component {
             </GroupItem>
             <GroupItem caption='Household Owner Details' colCount={2}>
               <Item
-                dataField='CustomerName'
+                dataField='HouseOwnerName'
                 // editorType='dxSelectBox'
                 // editorOptions={{
                 //   items: this.state.jlCustomers,
@@ -182,6 +345,12 @@ export class Dengue extends Component {
               </Item>
               <Item dataField='CusContactNo'>
                 <Label text='Mobile No' />
+              </Item>
+              <Item dataField='Address' editorType='dxTextArea'>
+                <Label text='Address' />
+              </Item>
+              <Item dataField='NoOfPatients' editorType='dxNumberBox'>
+                <Label text='No Of Patients' />
               </Item>
             </GroupItem>
           </Form>
@@ -386,7 +555,7 @@ export class Dengue extends Component {
             allowSearch={true}
             selection={{ mode: "single" }}
             hoverStateEnabled={true}
-            dataSource={this.state.jFeedbackAttachment}
+            dataSource={this.state.jFeedbackAConcerns}
           >
             <Editing
               mode='popup'
@@ -401,7 +570,7 @@ export class Dengue extends Component {
             <GroupPanel visible={true} />
             <Paging defaultPageSize={6} />
             <Column dataField='Concerns' />
-            <Column dataField='Answer' caption='Concerns'>
+            <Column dataField='Answer' caption='Status'>
               <Lookup
                 dataSource={this.AnswerResult}
                 valueExpr='ID'
@@ -437,7 +606,7 @@ export class Dengue extends Component {
               colCount={2}
             ></GroupItem>
           </Form>
-          <DataGrid
+          {/* <DataGrid
             id='grid-list'
             keyExpr='AttachmentID'
             showBorders={true}
@@ -466,8 +635,8 @@ export class Dengue extends Component {
             {/* <Column
               dataField='AttachmentName'
               editorOptions={{ readOnly: true }}
-            /> */}
-            <Column
+            /> 
+            </Card><Column
               caption={"Actions"}
               type='buttons'
               buttons={[
@@ -486,13 +655,79 @@ export class Dengue extends Component {
                 "delete",
               ]}
             />
+          </DataGrid>  */}
+
+          <DataGrid
+            id='grid-list'
+            // keyExpr='AttachmentID'
+            showBorders={true}
+            wordWrapEnabled={true}
+            allowSearch={true}
+            hoverStateEnabled={true}
+            dataSource={this.state.ApplicationAttachment}
+            onRowRemoving={this.handleAttachmentDeleteClick}
+          >
+            <Editing
+              mode='popup'
+              allowDeleting={true}
+              allowAdding={true}
+              allowUpdating={true}
+              useIcons={true}
+            >
+              <Popup
+                title='Add Your Attachment Information'
+                showTitle={true}
+              ></Popup>
+            </Editing>
+            <SearchPanel visible={true} />
+            <GroupPanel visible={true} />
+            <Paging defaultPageSize={20} />
+            <Column dataField='Name' />
+            <Column
+              dataField='AttachmentFilePath'
+              editorOptions={{ readOnly: true }}
+            />
+            <Column
+              dataField='AttachmentName'
+              editorOptions={{ readOnly: true }}
+            />
+            {/* <Validator>
+              <CustomRule
+                validationCallback={this.validateBRCopy}
+                message="Business Registration Copy is mandatory!"
+              />
+            </Validator> */}
+            <Column
+              caption='Actions'
+              type='buttons'
+              buttons={[
+                {
+                  hint: "Upload",
+                  icon: "upload",
+                  visible: true,
+                  onClick: this.onUploadUploadAttchmentClick,
+                },
+                "edit",
+                {
+                  hint: "View",
+                  icon: "fa fa-eye",
+                  onClick: this.onAppViewClick,
+                },
+                "delete",
+              ]}
+            />
           </DataGrid>
 
           <Navbar bg='light' variant='light'>
             <Button
               variant='dark'
               icon='feather icon-layers'
-              //  onClick={this.onSaveClick}
+              style={{
+                backgroundColor: "#28a745",
+                color: "white",
+                border: "none",
+              }}
+              onClick={this.onSaveClick}
               disabled={this.state.DocReadOnly}
             >
               Save
@@ -500,6 +735,11 @@ export class Dengue extends Component {
             <Button
               variant='dark'
               icon='feather icon-layers'
+              style={{
+                backgroundColor: "#28a745",
+                color: "white",
+                border: "none",
+              }}
               // onClick={this.onClearClick}
             >
               Clear

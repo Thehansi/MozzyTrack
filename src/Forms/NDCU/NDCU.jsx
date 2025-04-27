@@ -31,19 +31,10 @@ export class NDCU extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      FeedbackID: 0,
       jFeedback: {},
       DocReadOnly: false,
-      jlCustomers: [],
-      jlUser: [],
-      jFormList: [],
-      UploadAttchment: false,
-      FileInfo: {},
-      DocViewList: false,
-      SelectedID: 0,
-      //  FeedbackList: [],
-      LoadPanelVisible: false,
-      ListViewing: false,
+      jPhi: [],
+      jPhiDetails: [],
       DocumentID: 5002,
       jFeedbackAction: [],
       messages: [], // Ensure messages is an array
@@ -52,18 +43,25 @@ export class NDCU extends Component {
 
     this.FormRef = React.createRef();
     this.FormRef2 = React.createRef();
+    this.AnswerResult = [
+      { ID: "1", Name: "Yes" },
+      { ID: "2", Name: "No" },
+    ];
     this.jStatusList = [
-      { ID: 1, Name: "Active" },
-      { ID: 2, Name: "Inactive" },
-      { ID: 3, Name: "Completed" },
+      { ID: "1", Name: "Active" },
+      { ID: "2", Name: "Inactive" },
+      { ID: "3", Name: "Completed" },
+    ];
+    this.jSituationType = [
+      { ID: "1", Name: "No Complaint" },
+      { ID: "2", Name: "Complaint Issued" },
     ];
 
-    this.jPhi = [];
     this.ApprovalStatus = [
-      { ID: 1, Name: "Pending" },
-      { ID: 2, Name: "Approve" },
-      { ID: 3, Name: "Hold" },
-      { ID: 4, Name: "Cancel" },
+      { ID: "Pending", Name: "Pending" },
+      { ID: "Approve", Name: "Approve" },
+      { ID: "Hold", Name: "Hold" },
+      { ID: "Cancel", Name: "Cancel" },
     ];
   }
   get FormLayout() {
@@ -86,6 +84,74 @@ export class NDCU extends Component {
     this.setState({
       selectedDistrict: districtID,
       filteredDivSectors: DivisionalSecretariats[districtID] || [],
+    });
+  };
+
+  handlePHI = async (e) => {
+    const divSector = e.value;
+    const getPHI = await axios.get("/api/getRelatedPHI", {
+      params: {
+        DivisionalSecreter: divSector,
+      },
+    });
+
+    this.setState({
+      DivisionalSecreter: divSector,
+      jPhi: getPHI.data,
+    });
+  };
+
+  loadPhiDetails = async (e) => {
+    const phiID = e.value;
+    const getPHIdetails = await axios.get("/api/getPhiDetails", {
+      params: {
+        id: phiID,
+      },
+    });
+
+    this.setState({
+      jPhiDetails: getPHIdetails.data,
+    });
+  };
+
+  onUpdateDengueForm = (e) => {
+    console.log(e.row.data.ApprovalStatus);
+
+    Swal.fire({
+      type: "info",
+      showCancelButton: true,
+      text: "Do you want to save ?",
+      confirmButtonText: "Yes",
+      cancelButtonText: "No",
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+    }).then((res) => {
+      if (true) {
+        if (res.value) {
+          try {
+            axios
+              .post("/api/addNDCU", {
+                params: {
+                  FormID: e.row.data.FormID,
+                  ApprovalStatus: e.row.data.ApprovalStatus,
+                },
+              })
+              .then((response) => {
+                Swal.fire({
+                  icon: "success",
+                  title: "Success",
+                  text: "User details saved successfully!",
+                }).then(async (res) => {});
+              })
+              .catch((error) => {
+                console.error(error);
+                this.onLoadPanelHiding("Something went wrong", "error");
+              });
+          } catch (error) {
+            console.log(error);
+          }
+        }
+      }
     });
   };
 
@@ -131,17 +197,26 @@ export class NDCU extends Component {
                   valueExpr='ID'
                   displayExpr='Name'
                   disabled={!this.state.selectedDistrict}
+                  onValueChanged={this.handlePHI}
                 />
               </Item>
               <Item
-                dataField='ImpotentType'
-                editorType='dxSelectBox'
-                editorOptions={{
-                  items: this.jPhi,
-                  valueExpr: "ID",
-                  displayExpr: "Name",
-                }}
+                dataField='phi'
+                // editorType='dxSelectBox'
+                // editorOptions={{
+                //   items: this.state.jPhi,
+                //   valueExpr: "UserName",
+                //   displayExpr: "UserName",
+                // }}
               >
+                <SelectBox
+                  searchEnabled={true}
+                  items={this.state.jPhi}
+                  valueExpr='UserName'
+                  displayExpr='UserName'
+                  disabled={!this.state.DivisionalSecreter}
+                  onValueChanged={this.loadPhiDetails}
+                />
                 <Label text='PHI' />
               </Item>
             </GroupItem>
@@ -152,13 +227,18 @@ export class NDCU extends Component {
           </Form>
           <DataGrid
             id='grid-list'
-            keyExpr='ConcernsID'
+            //  keyExpr='ConcernsID'
             showBorders={true}
             wordWrapEnabled={true}
             allowSearch={true}
             selection={{ mode: "single" }}
             hoverStateEnabled={true}
-            dataSource={this.state.jFormList}
+            dataSource={this.state.jPhiDetails}
+            //onCellDblClick={updatePRTable}
+            allowColumnResizing={true}
+            columnAutoWidth={true}
+            // onCellClick={getIndex}
+            // onSaved={onClickSave}
           >
             <Editing
               mode='popup'
@@ -172,13 +252,52 @@ export class NDCU extends Component {
             <SearchPanel visible={true} />
             <GroupPanel visible={true} />
             <Paging defaultPageSize={6} />
-            <Column dataField='FormID' />
-            <Column dataField='SituationType' />
-            <Column dataField='Date' dataType='date' />
-            <Column dataField='CustomerName' />
-            <Column dataField='ImmediateActionTaken' />
-            <Column dataField='NextFollowUpDate' />
-            <Column dataField='NICNo' />
+            <Column dataField='FormID' editorOptions={{ readOnly: true }} />
+            <Column
+              dataField='CusIdentificationNo'
+              caption='NICNO'
+              editorOptions={{ readOnly: true }}
+            />
+            <Column
+              dataField='ImpotentType'
+              caption='Situation Type'
+              editorOptions={{
+                readOnly: true,
+              }}
+            >
+              <Lookup
+                dataSource={this.jSituationType}
+                valueExpr='ID'
+                displayExpr='Name'
+              />
+            </Column>
+            <Column
+              dataField='HouseOwnerName'
+              caption='Household Owner'
+              editorOptions={{ readOnly: true }}
+            />
+            <Column
+              dataField='FillDate'
+              dataType='date'
+              caption='Fill Date'
+              editorOptions={{ readOnly: true }}
+            />
+            <Column
+              dataField='Question13'
+              caption='Immediate Action Taken'
+              editorOptions={{ readOnly: true }}
+            >
+              <Lookup
+                dataSource={this.AnswerResult}
+                valueExpr='ID'
+                displayExpr='Name'
+              />
+            </Column>
+            <Column
+              dataField='followUpDate'
+              caption='Next Follow UpDate'
+              editorOptions={{ readOnly: true }}
+            />
             <Column dataField='ApprovalStatus' caption='Approval Status'>
               <Lookup
                 dataSource={this.ApprovalStatus}
@@ -195,7 +314,7 @@ export class NDCU extends Component {
                   hint: "Save",
                   icon: "save",
                   visible: true,
-                  // onClick: this.onUploadUploadAttchmentClick,
+                  onClick: this.onUpdateDengueForm,
                 },
               ]}
             />

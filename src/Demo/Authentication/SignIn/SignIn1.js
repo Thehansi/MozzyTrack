@@ -7,6 +7,7 @@ import Aux from "../../../hoc/_Aux";
 import Breadcrumb from "../../../App/layout/AdminLayout/Breadcrumb";
 import { fetchLoginData } from "../../../store/logginActions";
 import notify from "devextreme/ui/notify";
+import logo from "../../../assets/images/logo new1.jpg";
 class SignUp1 extends Component {
   constructor(props) {
     super(props);
@@ -50,11 +51,36 @@ class SignUp1 extends Component {
               </div>
               <div className='card'>
                 <div className='card-body text-center'>
-                  {/* <div className="mb-4">
+                  {/* {/* <div className="mb-4">
                     <i className="feather icon-unlock auth-icon" />
-                  </div> */}
-                  <h3 className='mb-4'>MozziTrack</h3>
+                  </div> 
+                  <h3 className='mb-4'>MozziTrack</h3> */}
                   {/* <p>{this.props.data.error}</p> */}
+                  {/* <div className='mb-4 text-center'>
+                    <img
+                      src={logo}
+                      alt='MozziTrack Logo'
+                      style={{ width: "200px", height: "auto" }}
+                    />
+                  </div> */}
+                  {/* <h3 className='mb-4'>MozziTrack</h3> */}
+
+                  <div className='mb-4 text-center'>
+                    <img
+                      src={logo}
+                      alt='MozziTrack Logo'
+                      style={{
+                        width: "200px",
+                        height: "auto",
+                        border: "4px solid #28a745", // green border
+                        borderRadius: "12px", // rounded corners
+                        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)", // soft shadow
+                        padding: "10px",
+                        backgroundColor: "#ffffff", // optional background inside frame
+                      }}
+                    />
+                    {/* <h3 className='mb-4'>MozziTrack</h3> */}
+                  </div>
 
                   <div className='input-group mb-3'>
                     <input
@@ -77,6 +103,11 @@ class SignUp1 extends Component {
                   <div className='form-group text-left'></div>
                   <button
                     className='btn btn-primary shadow-2 mb-4'
+                    style={{
+                      backgroundColor: "#28a745",
+                      color: "white",
+                      border: "none",
+                    }}
                     onClick={() => {
                       if (
                         this.state.email != undefined &&

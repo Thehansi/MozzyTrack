@@ -96,6 +96,7 @@ class NavCollapse extends Component {
     const subContent = (
       <Aux>
         <a
+        style={{backgroundColor: "#078c36" }}
           href={DEMO.BLANK_LINK}
           className={navLinkClass.join(" ")}
           onClick={() =>
@@ -106,7 +107,7 @@ class NavCollapse extends Component {
           {itemTitle}
           <NavBadge layout={this.props.layout} items={this.props.collapse} />
         </a>
-        <ul className="pcoded-submenu">{navItems}</ul>
+        <ul className="pcoded-submenu"  style={{ backgroundColor: '#078c36'}}>{navItems}</ul>
       </Aux>
     );
     let mainContent = "";

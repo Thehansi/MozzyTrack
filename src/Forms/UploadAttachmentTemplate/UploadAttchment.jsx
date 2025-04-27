@@ -74,7 +74,7 @@ export class UploadAttchment extends Component {
 
           var ext = /(?:\.([^.]+))?$/;
           let FileName = (
-            "PR" +
+            "MozziTrack" +
             "_" +
             uuid.v4() +
             "." +
@@ -84,7 +84,7 @@ export class UploadAttchment extends Component {
           axios
             .post("/api/upload/attachment", FileData, {
               params: {
-                Folder: "PR",
+                Folder: "MozziTrack",
                 FileName: FileName,
               },
             })
@@ -128,10 +128,10 @@ export class UploadAttchment extends Component {
     return (
       <Fragment>
         <Modal
-          size="xl"
+          size='xl'
           show={this.props.Show}
           onHide={this.onCloseClick}
-          backdrop="static"
+          backdrop='static'
           keyboard={false}
         >
           <Modal.Header closeButton>
@@ -148,25 +148,25 @@ export class UploadAttchment extends Component {
 
               <div>
                 <input
-                  type="file"
-                  name="file"
+                  type='file'
+                  name='file'
                   //accept=".rpt"
                   onChange={(e) => this.FileSelect(e)}
                 />
               </div>
             </Card>
 
-            <Navbar bg="light" variant="light">
+            <Navbar bg='light' variant='light'>
               <Button
-                variant="dark"
-                icon="feather icon-layers"
+                variant='dark'
+                icon='feather icon-layers'
                 onClick={this.onUploadClickEvent}
               >
                 Upload
               </Button>
               <Button
-                variant="dark"
-                icon="feather icon-layers"
+                variant='dark'
+                icon='feather icon-layers'
                 onClick={this.onCloseClick}
               >
                 Close

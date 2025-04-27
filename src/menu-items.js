@@ -77,7 +77,7 @@ export default {
       children: [
         {
           id: 20,
-          title: "Chat Room",
+          title: "24/7 Community Room",
           type: "item",
           icon: "feather icon-grid",
           url: "/forms/chatBox/chat",

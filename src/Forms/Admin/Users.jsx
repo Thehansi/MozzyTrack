@@ -31,14 +31,20 @@ import { Break } from "devextreme-react/cjs/range-selector";
 import Province from "../CommanData/Province";
 import Districts from "../CommanData/District";
 import DivisionalSecretariats from "../CommanData/DivisionalSecretariats";
+import UserGroupData from "../CommanData/UserGroup";
 
 const User = () => {
   const [user, setUser] = useState([]);
   const FormRef = useRef(null);
 
-  const [groups, setGroups] = useState([]);
-  const [branches, setBranches] = useState([]);
-  const [departments, setDepartments] = useState([]);
+  const [groups, setGroups] = useState([
+    { ID: "1", Name: "Admin" },
+    { ID: "2", Name: "PHI" },
+    { ID: "3", Name: "NDCU" },
+    { ID: "4", Name: "Household" },
+  ]);
+  // const [branches, setBranches] = useState([]);
+  //const [departments, setDepartments] = useState([]);
 
   // const [selectedGroup, setSelectedGroup] = useState(null);
   // const [selectedBranch, setSelectedBranch] = useState(null);
@@ -62,12 +68,12 @@ const User = () => {
       UserGroup: "",
       Password: "",
       ConfirmPassword: "",
-      Branch: "",
-      Department: "",
+      Province: "",
+      District: "",
       Email: "",
       ContactNo: "",
       Active: true,
-      // CreatedDate: null,
+      DiviSector: "",
     },
     viewUser: 0,
     users: [],
@@ -76,7 +82,6 @@ const User = () => {
     GroupTable: [],
     jSetForm: {},
     boolValue: false,
-    fvdfv: false,
   });
 
   useEffect(() => {
@@ -87,8 +92,8 @@ const User = () => {
     if (selectedProvince) {
       const districts = Districts[selectedProvince] || [];
       setFilteredDistricts(districts);
-      setSelectedDistrict(null); // Reset selected district
-      setFilteredDivSectors([]); // Reset divisional sectors
+      setSelectedDistrict(null);
+      setFilteredDivSectors([]);
     }
   }, [selectedProvince]);
 
@@ -96,33 +101,35 @@ const User = () => {
     if (selectedDistrict) {
       const divSectors = DivisionalSecretariats[selectedDistrict] || [];
       setFilteredDivSectors(divSectors);
-      setSelectedDivSect(null); // Reset selected divisional sector
+      setSelectedDivSect(null);
     }
   }, [selectedDistrict]);
 
   const fetchGroupDetails = async () => {
     const authData = JSON.parse(localStorage.getItem("user"));
-    const checkAuthentication = await axios.get(
-      "/api/CheckUserAuthentication",
-      {
-        params: { UsersID: authData.UserName, MenuID: 9001 },
-      }
-    );
+    // const checkAuthentication = await axios.get(
+    //   "/api/CheckUserAuthentication",
+    //   {
+    //     params: { UsersID: authData.UserName, MenuID: 9001 },
+    //   }
+    // );
     setUserName(authData.UserName);
-    if (checkAuthentication.data.length != 0) {
-      if (checkAuthentication.data[0].UserView) {
+    if (true) {
+      //checkAuthentication.data.length != 0
+      if (true) {
+        //checkAuthentication.data[0].UserView
         setIsView(false);
         try {
-          const groupResponse = await axios.get("/api/getallgroupforuser");
-          setGroups(groupResponse.data);
+          // const groupResponse = await axios.get("/api/getallgroupforuser");
+          // setGroups(groupResponse.data);
 
-          const branchResponse = await axios.get("/api/getallbranchforuser");
-          setBranches(branchResponse.data);
+          // const branchResponse = await axios.get("/api/getallbranchforuser");
+          // setBranches(branchResponse.data);
 
-          const departmentResponse = await axios.get(
-            "/api/getalldepartmentforuser"
-          );
-          setDepartments(departmentResponse.data);
+          // const departmentResponse = await axios.get(
+          //   "/api/getalldepartmentforuser"
+          // );
+          // setDepartments(departmentResponse.data);
           const getUsers = await axios.get("/api/getalluser");
 
           setState((prevState) => ({
@@ -134,12 +141,12 @@ const User = () => {
           console.error("Error fetching details:", error);
         }
       }
-      if (checkAuthentication.data[0].UserAdd) {
-        setISAdd(false);
-      }
-      if (checkAuthentication.data[0].UserEdit) {
-        setISEdit(false);
-      }
+      // if (checkAuthentication.data[0].UserAdd) {
+      //   setISAdd(false);
+      // }
+      // if (checkAuthentication.data[0].UserEdit) {
+      //   setISEdit(false);
+      // }
     }
   };
 
@@ -163,33 +170,37 @@ const User = () => {
 
     const { jForm } = state;
 
-    if (!FormLayout.validate().isValid) {
-      OnNotification("Fields marked with * are required", "error");
-      return false;
-    } else if (
-      jForm.UserName == "" ||
-      jForm.UserName == NaN ||
-      jForm.UserName == undefined
-    ) {
-      OnNotification("UserName is Required", "error");
-      return false;
-    } else if (
-      jForm.UserGroup == "" ||
-      jForm.UserGroup == NaN ||
-      jForm.UserGroup == undefined
-    ) {
-      OnNotification("UserGroup is Required", "error");
-      return false;
-    }
+    // if (!FormLayout.validate().isValid) {
+    //   OnNotification("Fields marked with * are required", "error");
+    //   return false;
+    // } else
+    // if (
+    //   jForm.UserName == "" ||
+    //   jForm.UserName == NaN ||
+    //   jForm.UserName == undefined
+    // ) {
+    //   OnNotification("UserName is Required", "error");
+    //   return false;
+    // }
+    // else if (
+    //   jForm.UserGroup == "" ||
+    //   jForm.UserGroup == NaN ||
+    //   jForm.UserGroup == undefined
+    // ) {
+    //   OnNotification("UserGroup is Required", "error");
+    //   return false;
+    // }
     //  if (state.jForm.PasswordChange) {
-    else if (
-      jForm.Password == "" ||
-      jForm.Password == NaN ||
-      jForm.Password == undefined
-    ) {
-      OnNotification("Password is Required", "error");
-      return false;
-    } else if (matchPassword.test(jForm.Password) == false) {
+    // else if (
+    //   jForm.Password == "" ||
+    //   jForm.Password == NaN ||
+    //   jForm.Password == undefined
+    // ) {
+    //   OnNotification("Password is Required", "error");
+    //   return false;
+    // }
+    //else
+    if (matchPassword.test(jForm.Password) == false) {
       OnNotification(
         "Passwords length must be 8+ and uppercase,lowercase,numbers.",
         "error"
@@ -198,14 +209,16 @@ const User = () => {
     } else if (jForm.Password != jForm.ConfirmPassword) {
       OnNotification("New password & Confirm password must match", "error");
       return false;
-    } else if (
-      jForm.Department == "" ||
-      jForm.Department == NaN ||
-      jForm.Department == undefined
-    ) {
-      OnNotification("Department is Required", "error");
-      return false;
-    } else if (!emailRegex.test(jForm.Email.trim())) {
+    }
+    // else if (
+    //   jForm.Department == "" ||
+    //   jForm.Department == NaN ||
+    //   jForm.Department == undefined
+    // ) {
+    //   OnNotification("Department is Required", "error");
+    //   return false;
+    // }
+    else if (!emailRegex.test(jForm.Email.trim())) {
       OnNotification("Invalid Email", "error");
       return false;
     }
@@ -213,7 +226,8 @@ const User = () => {
   };
 
   const handleSave = async (e) => {
-    if (await OnSaveValidation()) {
+    if (true) {
+      //await OnSaveValidation()
       axios
         .post("/api/addUser", {
           group: JSON.stringify(state.jForm),
@@ -226,19 +240,17 @@ const User = () => {
             title: "Success",
             text: "User details saved successfully!",
           }).then(async (res) => {
+            console.log("awa");
             const getUsers = await axios.get("/api/getalluser");
             console.log("getUsers", getUsers);
             setState((prevState) => ({
               ...prevState,
               users: getUsers.data,
             }));
-            const newUser = response.data;
             setNumber(0);
             setState((prevState) => ({
               ...prevState,
               jForm: {},
-              boolValue: false,
-              fvdfv: false,
             }));
           });
         })
@@ -267,9 +279,26 @@ const User = () => {
   };
 
   const updateTable = (e) => {
-    if (!isEdit) {
+    if (true) {
+      //!isEdit
+
       setNumber(e.data.ContactNo);
-      setState({ jForm: e.data, users: state.users, boolValue: true });
+      setState({
+        jForm: {
+          UserName: e.data.UserName,
+          UserGroup: e.data.UserGroup,
+          Password: e.data.Password,
+          ConfirmPassword: e.data.Password,
+          Province: e.data.Province,
+          District: e.data.District,
+          Email: e.data.Email,
+          ContactNo: e.data.ContactNo,
+          Active: e.data.Active,
+          DiviSector: e.data.DiviSector,
+        },
+        users: state.users,
+        boolValue: true,
+      });
       setIsUpdate(false);
       setTimeout(() => {
         focusTextBox();
@@ -334,16 +363,15 @@ const User = () => {
                 className='w-50'
               >
                 <RequiredRule message='Field required' />
-                <Label text='Username'></Label>
+                <Label text='User Name'></Label>
               </Item>
               <Item
                 dataField='UserGroup'
                 editorType='dxSelectBox'
                 editorOptions={{
-                  searchEnabled: true,
-                  dataSource: groups,
-                  valueExpr: "GroupCode",
-                  displayExpr: "Discription",
+                  items: groups,
+                  valueExpr: "ID",
+                  displayExpr: "Name",
                 }}
               >
                 <RequiredRule message='Field required' />
@@ -397,7 +425,7 @@ const User = () => {
                 <Label text='District'></Label>
               </Item>
               <Item
-                dataField='DivSect'
+                dataField='DiviSector'
                 editorType='dxSelectBox'
                 editorOptions={{
                   searchEnabled: true,
@@ -435,7 +463,7 @@ const User = () => {
             variant='secondary'
             icon='feather icon-layers'
             onClick={handleSave}
-            disabled={isAdd}
+            // disabled={isAdd}
           >
             Save
           </Button>
@@ -443,7 +471,7 @@ const User = () => {
             variant='secondary'
             icon='feather icon-layers'
             onClick={handleClear}
-            disabled={isAdd}
+            // disabled={isAdd}
           >
             Clear
           </Button>
@@ -465,25 +493,15 @@ const User = () => {
             <Paging defaultPageSize={20} />
 
             <Column dataField='UserName' caption='User Name' />
-            <Column dataField='UserGroup' caption='User Group'>
-              <Lookup
-                dataSource={groups}
-                valueExpr='GroupCode'
-                displayExpr='Discription'
-              />
-            </Column>
+            <Column dataField='UserGroup' caption='User Group' />
+            <Column dataField='Province' caption='Province' />
             <Column
               dataField='Password'
               caption='Password'
               cellRender={PasswordCell}
             />
-            <Column
-              dataField='ConfirmPassword'
-              caption='Confirm Password'
-              cellRender={PasswordCell}
-            />
-            <Column dataField='Branch' caption='Province' />
-            <Column dataField='Department' caption='District' />
+            <Column dataField='District' caption='District' />
+            <Column dataField='DiviSector' caption='Divisional Secretariats' />
             <Column dataField='Email' caption='Email' />
             <Column dataField='ContactNo' caption='Contact No' />
             <Column dataField='Active' caption='Active' dataType='bit' />
