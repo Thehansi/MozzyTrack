@@ -7,7 +7,7 @@ import Aux from "../../../hoc/_Aux";
 import Breadcrumb from "../../../App/layout/AdminLayout/Breadcrumb";
 import { fetchLoginData } from "../../../store/logginActions";
 import notify from "devextreme/ui/notify";
-import logo from "../../../assets/images/logo new1.jpg";
+import logo from "../../../assets/images/logo new01.png";
 class SignUp1 extends Component {
   constructor(props) {
     super(props);

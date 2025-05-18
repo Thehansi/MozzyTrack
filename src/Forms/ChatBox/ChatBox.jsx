@@ -97,12 +97,15 @@ import React, { useState, useEffect } from "react";
 import { Button } from "devextreme-react/button";
 import { TextBox } from "devextreme-react/text-box";
 import "./ChatBoxStyle.css"; // Import CSS file
+import axios from "axios";
 
 const ChatBox = () => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [selectedImage, setSelectedImage] = useState(null);
   const [username, setUsername] = useState("User1"); // Logged-in user's name (can be dynamic)
+  const [isAdd, setISAdd] = useState(true);
+  const [isEdit, setISEdit] = useState(true);
 
   // Load chat history from localStorage when component mounts
   useEffect(() => {
@@ -113,6 +116,27 @@ const ChatBox = () => {
     const authData = JSON.parse(localStorage.getItem("user"));
     setUsername(authData.UserName);
   }, []);
+
+  useEffect(() => {
+    fetchGroupDetails();
+  }, []);
+
+  const fetchGroupDetails = async () => {
+    const authData = JSON.parse(localStorage.getItem("user"));
+    const checkAuthentication = await axios.get(
+      "/api/CheckUserAuthentication",
+      {
+        params: {
+          UserGroup: authData.UserGroup,
+          MenuID: 30,
+        },
+      }
+    );
+    console.log("checkAuthentication",checkAuthentication.data[0]);
+    if (checkAuthentication.data[0].IsEdit == 1) {
+      setISAdd(false);
+    }
+  };
 
   // Save messages to localStorage whenever messages update
   useEffect(() => {
@@ -193,7 +217,12 @@ const ChatBox = () => {
           disabled={!newMessage && !selectedImage}
           className='send-btn'
         />
-        <Button text='Clear Chat' onClick={clearChat} className='clear-btn' />
+        <Button
+          text='Clear Chat'
+          onClick={clearChat}
+          className='clear-btn'
+          disabled={isAdd}
+        />
       </div>
     </div>
   );

@@ -53,7 +53,6 @@ const IsLogginError = (error) => {
 
 export const loggout = () => {
   localStorage.setItem("user", null);
-  localStorage.setItem("School", null);
   localStorage.setItem("Authorization", null);
   // localStorage.setItem("ApprovalDocument", null);
   return (dispatch) => {
@@ -72,41 +71,94 @@ const OnNotification = (message, type) => {
 
 export const fetchLoginData = (UserID, CurrentPassword) => {
   return (dispatch) => {
-    if (UserID && CurrentPassword) {
+    if (UserID != undefined && CurrentPassword != undefined) {
       dispatch(IsLogginReuqest);
+      axios
+        .get(`/api/authontication-login`, {
+          params: { GroupID: UserID, CurrentPassword: CurrentPassword },
+        })
+        .then((respones) => {
+          console.log("User Permision", respones);
+          const user = JSON.parse(respones.data[0].Users);
+          //  const UserWiseSchool = "";
+          // const UserWiseAuthorization = JSON.parse(
+          //   respones.data[0].UserWiseAuthorization
+          // );
+          console.log("User Permision user", user);
+          const UserWiseAuthorization = [
+            { MenuID: 1, Auth: 0 },
+            { MenuID: 2, Auth: 0 },
+            { MenuID: 10, Auth: 0 },
+            { MenuID: 20, Auth: 0 },
+            { MenuID: 30, Auth: 0 },
+            { MenuID: 1200, Auth: 0 },
+            { MenuID: 1201, Auth: 0 },
+            { MenuID: 9000, Auth: 0 },
+            { MenuID: 9001, Auth: 0 },
+            { MenuID: 9006, Auth: 0 },
+            { MenuID: 9007, Auth: 0 },
+          ];
 
-      // Mock User Data
-      const mockUser = {
-        UserID,
-        Name: "Thehansi",
-        Role: "Admin",
-        Active: 1,
-      };
+          const ApprovalDocument = null;
 
-      // Mock Authorization Data
-      const UserWiseAuthorization = [
-        { MenuID: 1000, Auth: 1 },
-        { MenuID: 1001, Auth: 1 },
-        { MenuID: 1002, Auth: 1 },
-        { MenuID: 1003, Auth: 1 },
-        { MenuID: 1004, Auth: 1 },
-      ];
-
-      console.log("Mock User Login", mockUser);
-
-      dispatch(IsLoggedSuccess(mockUser, UserWiseAuthorization));
-
-      localStorage.setItem("user", JSON.stringify(mockUser));
-      localStorage.setItem(
-        "Authorization",
-        JSON.stringify(UserWiseAuthorization)
-      );
-
-      OnNotification("Login Successful", "success");
+          if (Object.keys(user).length !== 0 && user.Active == 1) {
+            dispatch(IsLoggedSuccess(user, UserWiseAuthorization));
+            localStorage.setItem("user", JSON.stringify(user));
+            localStorage.setItem(
+              "Authorization",
+              JSON.stringify(UserWiseAuthorization)
+            );
+          } else {
+            OnNotification("Invalid User Name or Passrwod", "error");
+            dispatch(IsLogginError("Error Loggin Attempt"));
+          }
+        })
+        .catch((error) => {
+          OnNotification("Invalid UserName Or Passwrod", "error");
+          const errorMsg = error.message;
+          dispatch(IsLogginError(errorMsg));
+        });
     } else {
-      OnNotification("Invalid UserName Or Password", "error");
-      dispatch(IsLogginError("Invalid UserName Or Password"));
+      OnNotification("Invalid UserName Or Passwrod", "error");
+      const errorMsg = "Invalid UserName Or Passwrod";
+      dispatch(IsLogginError(errorMsg));
     }
+
+    // if (UserID && CurrentPassword) {
+    //   dispatch(IsLogginReuqest);
+
+    //   // Mock User Data
+    //   const mockUser = {
+    //     UserID,
+    //     Name: "Thehansi",
+    //     Role: "Admin",
+    //     Active: 1,
+    //   };
+
+    //   // Mock Authorization Data
+    //   const UserWiseAuthorization = [
+    //     { MenuID: 10, Auth: 0 },
+    //     { MenuID: 1001, Auth: 1 },
+    //     { MenuID: 1002, Auth: 1 },
+    //     { MenuID: 1003, Auth: 1 },
+    //     { MenuID: 1004, Auth: 1 },
+    //   ];
+
+    //   console.log("Mock User Login", mockUser);
+
+    //   dispatch(IsLoggedSuccess(mockUser, UserWiseAuthorization));
+
+    //   localStorage.setItem("user", JSON.stringify(mockUser));
+    //   localStorage.setItem(
+    //     "Authorization",
+    //     JSON.stringify(UserWiseAuthorization)
+    //   );
+
+    //   OnNotification("Login Successful", "success");
+    // } else {
+    //   OnNotification("Invalid UserName Or Password", "error");
+    //   dispatch(IsLogginError("Invalid UserName Or Password"));
+    // }
   };
 };
 

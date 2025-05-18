@@ -59,28 +59,25 @@ const PasswordRest = () => {
     const checkAuthentication = await axios.get(
       "/api/CheckUserAuthentication",
       {
-        params: { UsersID: authData.UserName, MenuID: 9006 },
+        params: {
+          UserGroup: authData.UserGroup,
+          MenuID: 9006,
+        },
       }
     );
     setUserName(authData.UserName);
     if (checkAuthentication.data.length != 0) {
-      if (checkAuthentication.data[0].UserView) {
-        setIsView(false);
+      if (checkAuthentication.data[0].IsEdit == 1) {
+        setISAdd(false);
+        setISEdit(false);
         try {
           const usernameResponse = await axios.get(
             "/api/getallPasswordDetails"
           );
           setUsername(usernameResponse.data);
-          console.log("get all pw details");
         } catch (error) {
           console.error("Error fetching details:", error);
         }
-      }
-      if (checkAuthentication.data[0].UserAdd) {
-        setISAdd(false);
-      }
-      if (checkAuthentication.data[0].UserEdit) {
-        setISEdit(false);
       }
     }
   };
@@ -205,16 +202,15 @@ const PasswordRest = () => {
   };
 
   const setValue = async (UserName) => {
-    console.log("user name print", UserName);
-    try {
-      const usernameResponse = await axios.post("/api/getcurrentpassword", {
-        UserName: UserName,
-      });
-      console.log("user response", usernameResponse.data[0].Password);
-      setpassword(usernameResponse.data[0].Password);
-      console.log("get all password each users");
-    } catch (error) {
-      console.error("Error fetching details:", error);
+    if (UserName != undefined) {
+      try {
+        const usernameResponse = await axios.post("/api/getcurrentpassword", {
+          UserName: UserName,
+        });
+        setpassword(usernameResponse.data[0].Password);
+      } catch (error) {
+        console.error("Error fetching details:", error);
+      }
     }
   };
 
@@ -243,11 +239,11 @@ const PasswordRest = () => {
 
   return (
     <Aux>
-      <Card title="Password Reset">
+      <Card title='Password Reset'>
         <Form ref={FormRef} formData={state.jPasswordReset}>
           <Item
-            dataField="UserName"
-            editorType="dxSelectBox"
+            dataField='UserName'
+            editorType='dxSelectBox'
             editorOptions={{
               dataSource: username,
               //items: state.Sts,
@@ -262,7 +258,7 @@ const PasswordRest = () => {
           </Item>
 
           <Item
-            dataField="CurrentPassword"
+            dataField='CurrentPassword'
             editorOptions={{
               maxLength: 50,
               // mode: "password",
@@ -273,8 +269,8 @@ const PasswordRest = () => {
             <RequiredRule />
           </Item>
           <Item
-            dataField="Password"
-            editorType="dxTextBox"
+            dataField='Password'
+            editorType='dxTextBox'
             editorOptions={{
               mode: passwordVisible ? "text" : "password",
               maxLength: 50,
@@ -283,11 +279,11 @@ const PasswordRest = () => {
               value: password,
             }}
           >
-            <Label text="New Password" />
+            <Label text='New Password' />
             <RequiredRule />
           </Item>
           <Item
-            dataField="ConfirmPassword"
+            dataField='ConfirmPassword'
             editorOptions={{
               maxLength: 50,
               mode: "password",
@@ -298,20 +294,30 @@ const PasswordRest = () => {
         </Form>
       </Card>
 
-      <Navbar bg="light" variant="light">
+      <Navbar bg='light' variant='light'>
         <Button
-          variant="secondary"
-          icon="feather icon-layers"
+          variant='secondary'
+          icon='feather icon-layers'
           onClick={handleSave}
           disabled={isEdit}
+          style={{
+            backgroundColor: "#28a745",
+            color: "white",
+            border: "none",
+          }}
         >
           Update
         </Button>
         <Button
-          variant="secondary"
-          icon="feather icon-layers"
+          variant='secondary'
+          icon='feather icon-layers'
           disabled={isEdit}
           onClick={OnClearForm}
+          style={{
+            backgroundColor: "#28a745",
+            color: "white",
+            border: "none",
+          }}
         >
           Clear
         </Button>

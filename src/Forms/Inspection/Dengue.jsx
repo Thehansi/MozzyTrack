@@ -25,6 +25,10 @@ import axios from "axios";
 import UploadAttchment from "../UploadAttachmentTemplate/UploadAttchment";
 import { connect } from "react-redux";
 import { RadioGroup } from "devextreme-react/radio-group";
+import Province from "../CommanData/Province";
+import Districts from "../CommanData/District";
+import DivisionalSecretariats from "../CommanData/DivisionalSecretariats";
+import { param } from "jquery";
 
 export class Dengue extends Component {
   constructor(props) {
@@ -32,11 +36,12 @@ export class Dengue extends Component {
     this.state = {
       FeedbackID: 0,
       jFeedback: {
-        FormID: this.generateFormID(),
+        //  FormID: this.generateFormID(),
       },
       DocReadOnly: false,
       jlCustomers: [],
-      jPHI: [],
+      // jPHI: [],
+      userName:"",
       ApplicationAttachment: [],
       UploadAttchment: false,
       jFeedbackAttachment: [],
@@ -44,11 +49,12 @@ export class Dengue extends Component {
       FileInfo: {},
       DocViewList: false,
       SelectedID: 0,
-      //  FeedbackList: [],
       LoadPanelVisible: false,
       ListViewing: false,
-      DocumentID: 5002,
+      DocumentID: 2,
       jFeedbackAction: [],
+      FormData: [],
+      isEdit: true,
     };
     this.FormRef = React.createRef();
     this.FormRef2 = React.createRef();
@@ -123,73 +129,134 @@ export class Dengue extends Component {
     );
   }
 
-  onSaveClick = () => {
-    Swal.fire({
-      type: "info",
-      showCancelButton: true,
-      text: "Do you want to save ?",
-      confirmButtonText: "Yes",
-      cancelButtonText: "No",
-      allowOutsideClick: false,
-      allowEscapeKey: false,
-    }).then((res) => {
-      if (true) {
-        if (res.value) {
-          try {
-            axios
-              .post("/api/addDengueForm", {
-                Feedback: JSON.stringify(this.state.jFeedback),
-                FeedbackAConcerns: JSON.stringify(
-                  this.state.jFeedbackAConcerns
-                ),
-                ApplicationAttachment: JSON.stringify(
-                  this.state.ApplicationAttachment
-                ),
-              })
-              .then((response) => {
-                Swal.fire({
-                  icon: "success",
-                  title: "Success",
-                  text: "User details saved successfully!",
-                }).then(async (res) => {
-                  // const getUsers = await axios.get("/api/getalluser");
-                  // console.log("getUsers", getUsers);
-                  // setState((prevState) => ({
-                  //   ...prevState,
-                  //   users: getUsers.data,
-                  // }));
-                  // setNumber(0);
-                  // setState((prevState) => ({
-                  //   ...prevState,
-                  //   jForm: {},
-                  // }));
+  OnNotification = (message, type) => {
+    notify({
+      message: message,
+      type: type,
+      displayTime: 3000,
+      position: { at: "top right", offset: "50" },
+    });
+  };
+
+  OnSaveValidation = async () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (
+      this.state.jFeedback.PhiID == "" ||
+      this.state.jFeedback.PhiID == NaN ||
+      this.state.jFeedback.PhiID == undefined
+    ) {
+      this.OnNotification("PHI ID is Required", "error");
+      return false;
+    } else if (
+      this.state.jFeedback.HouseOwnerName == "" ||
+      this.state.jFeedback.HouseOwnerName == NaN ||
+      this.state.jFeedback.HouseOwnerName == undefined
+    ) {
+      this.OnNotification("House Owner Name is Required", "error");
+      return false;
+    } else if (
+      this.state.jFeedback.CusIdentificationNo == "" ||
+      this.state.jFeedback.CusIdentificationNo == NaN ||
+      this.state.jFeedback.CusIdentificationNo == undefined
+    ) {
+      this.OnNotification("NIC is Required", "error");
+      return false;
+    } else if (
+      this.state.jFeedback.CusContactNo == "" ||
+      this.state.jFeedback.CusContactNo == NaN ||
+      this.state.jFeedback.CusContactNo == undefined
+    ) {
+      this.OnNotification("Contact No is Required", "error");
+      return false;
+    } else if (
+      this.state.jFeedback.FillDate == "" ||
+      this.state.jFeedback.FillDate == NaN ||
+      this.state.jFeedback.FillDate == undefined
+    ) {
+      this.OnNotification("Submission Date is Required", "error");
+      return false;
+    } else if (
+      this.state.jFeedback.CusEmail == "" ||
+      this.state.jFeedback.CusEmail == NaN ||
+      this.state.jFeedback.CusEmail == undefined
+    ) {
+      this.OnNotification("Email is Required", "error");
+      return false;
+    } else if (
+      this.state.jFeedback.Address == "" ||
+      this.state.jFeedback.Address == NaN ||
+      this.state.jFeedback.Address == undefined
+    ) {
+      this.OnNotification("Address is Required", "error");
+      return false;
+    } else if (!emailRegex.test(this.state.jFeedback.CusEmail.trim())) {
+      this.OnNotification("Invalid Email", "error");
+      return false;
+    } else {
+      return true;
+    }
+  };
+
+  onSaveClick = async () => {
+    if (await this.OnSaveValidation()) {
+      Swal.fire({
+        type: "info",
+        showCancelButton: true,
+        text: "Do you want to save ?",
+        confirmButtonText: "Yes",
+        cancelButtonText: "No",
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+      }).then((res) => {
+        if (true) {
+          if (res.value) {
+            try {
+              axios
+                .post("/api/addDengueForm", {
+                  Feedback: JSON.stringify(this.state.jFeedback),
+                  FeedbackAConcerns: JSON.stringify(
+                    this.state.jFeedbackAConcerns
+                  ),
+                  ApplicationAttachment: JSON.stringify(
+                    this.state.ApplicationAttachment
+                  ),
+                })
+                .then((response) => {
+                  Swal.fire({
+                    icon: "success",
+                    title: "Success",
+                    text: "User details saved successfully!",
+                  }).then(async (res) => {
+                    const getUsers = await axios.get("/api/getAllFormData",
+                         {
+            params: { PhiID: this.state.userName },
+          },
+                    );
+                    this.setState({
+                      FormData: getUsers.data,
+                    });
+                    this.setState((prevState) => ({
+                      ...prevState,
+                      jFeedback: {
+                        FormID: this.generateFormID(),
+                      },
+                      jFeedbackAConcerns: [],
+                      ApplicationAttachment: [],
+                    }));
+                  });
+                })
+                .catch((error) => {
+                  console.error(error);
+                  this.onLoadPanelHiding("Something went wrong", "error");
                 });
-                //this.onLoadPanelHiding("Successfully Updated", "success");
-                // let _newFeedbackID = response.data[0].NewFeedbackID;
-                // if (_newFeedbackID != 0) {
-                //   this.onLoadPanelHiding("Successfully Saved", "success");
-                //   this.OnClearForm();
-                // } else if (_newFeedbackID == 0) {
-                //   this.onLoadPanelHiding("Successfully Updated", "success");
-                //   this.OnClearForm();
-                // }
-              })
-              .catch((error) => {
-                console.error(error);
-                this.onLoadPanelHiding("Something went wrong", "error");
-              });
-          } catch (error) {
-            console.log(error);
+            } catch (error) {
+              console.log(error);
+            }
           }
         }
-      }
-      // else if (res.dismiss == "cancel") {
-      //   this.setState({ LoadPanelVisible: false });
-      // } else if (res.dismiss == "esc") {
-      // } else {
-      //   this.onLoadPanelHiding("Enter Required Details", "error");
-      // }
-    });
+      });
+    }
   };
 
   onUploadUploadAttchmentClick = (e, FileName, FilePath, AttachmentID) => {
@@ -207,15 +274,20 @@ export class Dengue extends Component {
       let Count = 0;
       if (!this.state.ListViewing) {
         for (var i = 0; i < this.state.ApplicationAttachment.length; i++) {
-          if (
-            this.state.ApplicationAttachment[i].AttachmentID == AttachmentID
-          ) {
-            Count = i;
-          }
+          // if (
+          //   this.state.ApplicationAttachment[i].AttachmentID == AttachmentID
+          // ) {
+          Count = i;
+          // console.log("AWAAA loop", e);
+          // console.log("AWAAA1 loop", FileName);
+          // this.state.ApplicationAttachment[Count].AttachmentFilePath =
+          //   FileName + "";
+          // this.state.ApplicationAttachment[Count].AttachmentName = e;
+          // }
         }
-        console.log("Count", Count);
+
         this.state.ApplicationAttachment[Count].AttachmentFilePath =
-          FilePath + "";
+          FileName + "";
         this.state.ApplicationAttachment[Count].AttachmentName = e;
         this.setState((prevState) => ({
           ApplicationAttachment: this.state.ApplicationAttachment,
@@ -224,46 +296,145 @@ export class Dengue extends Component {
     });
   };
 
-  onAppViewClick = async (e) => {
-    if (e.row.data.AttachmentFilePath !== undefined) {
-      const filePath = await axios.get("/api/viewFile", {
-        responseType: "arraybuffer",
-        params: { FilePath: e.row.data.AttachmentFilePath },
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      let filePathValue;
-      let fileType = "";
-      if (filePath.config.params.FilePath !== undefined) {
-        filePathValue = filePath.config.params.FilePath;
-        const parts = filePathValue.split("\\");
-        const fileName = parts.pop();
-        let fullPath = fileName.split(".").pop().toLowerCase();
-        fileType = this.getFileType(fullPath);
-      }
-      if (filePath.data !== null || filePath.data !== undefined) {
-        const reqFile = new Blob([filePath.data], {
-          type: fileType,
-        });
+  
 
-        const fileURL = URL.createObjectURL(reqFile);
-        const newTab = window.open(fileURL, "_blank");
-      }
-    } else {
+  onAppViewClick = async (e) => {
+    const filePath = e.row.data.AttachmentFilePath;
+
+    if (!filePath) {
       this.onLoadPanelHiding("Please select the file", "error");
+      return;
+    }
+
+    try {
+      const response = await axios.get("/api/viewFile", {
+        responseType: "blob",
+        params: { FilePath: filePath },
+      });
+
+      // Get file extension
+      const extension = filePath.split(".").pop().toLowerCase();
+
+      // Map extension to MIME type
+      const mimeTypes = {
+        jpg: "image/jpeg",
+        jpeg: "image/jpeg",
+        png: "image/png",
+        gif: "image/gif",
+        bmp: "image/bmp",
+        svg: "image/svg+xml",
+        pdf: "application/pdf",
+      };
+
+      const mimeType = mimeTypes[extension] || "application/octet-stream";
+
+      const blob = new Blob([response.data], { type: mimeType });
+      const fileURL = URL.createObjectURL(blob);
+      window.open(fileURL, "_blank");
+    } catch (error) {
+      console.error("Error opening file", error);
+      this.onLoadPanelHiding("Failed to open file", "error");
     }
   };
 
-  componentDidMount = () => {
-    axios.all([axios.get("/api/gePHIDetails")]).then(
-      axios.spread(async (req) => {
-        console.log("eeee", req.data);
-        this.setState({
-          jPHI: req.data,
-        });
-      })
+  componentDidMount = async () => {
+    const authData = JSON.parse(localStorage.getItem("user"));
+    console.log("authData", authData.UserName);
+
+    const checkAuthentication = await axios.get(
+      "/api/CheckUserAuthentication",
+      {
+        params: {
+          UserGroup: authData.UserGroup,
+          MenuID: this.state.DocumentID,
+        },
+      }
     );
+    if (checkAuthentication.data[0].IsEdit == 1) {
+      this.setState({
+        userName: authData.UserName,
+        isEdit: false,
+      });
+
+      axios
+        .all([
+          axios.get("/api/gePHIDetails", {
+            params: { UserName: authData.UserName },
+          }),
+          axios.get("/api/getAllFormData",
+          {
+            params: { PhiID: authData.UserName },
+          }),
+        ])
+        .then(
+          axios.spread((phiRes, formRes) => {
+          if (phiRes.data.length != 0 || formRes.data.length != 0) {
+            this.setState((prevState) => ({
+              ...prevState,
+              jFeedback: {
+                FormID: this.generateFormID(),
+                PhiID: phiRes.data[0].Name,
+                Province: phiRes.data[0].Province,
+                District: phiRes.data[0].District,
+                DiviSector: phiRes.data[0].DiviSector,
+              },
+              FormData: formRes.data,
+            }));
+          }
+          })
+
+
+        )
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+        });
+    }
+  };
+
+  updatePRTable = async (e) => {
+    const headerDetails = await axios.get("/api/getHeadrerDetails", {
+      params: { FormID: e.data.FormID },
+    });
+    const Conserns = await axios.get("/api/getConserns", {
+      params: { FormID: e.data.FormID },
+    });
+
+    const AttachmentDetails = await axios.get("/api/getAttachment", {
+      params: { FormID: e.data.FormID },
+    });
+
+    this.setState({
+      jFeedback: headerDetails.data[0],
+      jFeedbackAConcerns: Conserns.data,
+      ApplicationAttachment: AttachmentDetails.data,
+    });
+  };
+
+  onClearClick = () => {
+    this.setState((prevState) => ({
+      ...prevState,
+      jFeedback: {
+        FormID: this.generateFormID(),
+      },
+      jFeedbackAConcerns: [],
+      ApplicationAttachment: [],
+    }));
+  };
+
+  handleProvinceChange = (e) => {
+    const provinceID = e.value;
+    this.setState({
+      selectedProvince: provinceID,
+      filteredDistricts: Districts[provinceID] || [],
+    });
+  };
+
+  handleDistrictChange = (e) => {
+    const districtID = e.value;
+    this.setState({
+      selectedDistrict: districtID,
+      filteredDivSectors: DivisionalSecretariats[districtID] || [],
+    });
   };
 
   render() {
@@ -284,17 +455,20 @@ export class Dengue extends Component {
               ></Item>
               <Item
                 dataField='PhiID'
-                editorType='dxSelectBox'
                 editorOptions={{
-                  items: this.state.jPHI,
-                  valueExpr: "ID",
-                  displayExpr: "Name",
+                  readOnly: true,
                 }}
+                // editorType='dxSelectBox'
+                // editorOptions={{
+                //   items: this.state.jPHI,
+                //   valueExpr: "ID",
+                //   displayExpr: "Name",
+                // }}
               >
                 <Label text='PHI ID' />
                 <RequiredRule message='Field is required to fill' />
               </Item>
-              <Item
+              {/* <Item
                 dataField='ImpotentType'
                 editorType='dxSelectBox'
                 editorOptions={{
@@ -303,37 +477,63 @@ export class Dengue extends Component {
                   displayExpr: "Name",
                 }}
               >
-                <RequiredRule message='Field is required to fill' />
                 <Label text='Situation Type' />
-              </Item>
-              {/* <Item
-                dataField='Status'
-                editorType='dxSelectBox'
-                editorOptions={{
-                  items: this.jStatusList,
-                  valueExpr: "ID",
-                  displayExpr: "Name",
-                }}
-              >
-                <RequiredRule message='Field is required to fill' />
               </Item> */}
               <Item dataField='FillDate' editorType='dxDateBox'>
                 <Label text='Submission Date' />
+                <RequiredRule message='Field is required to fill' />
               </Item>
             </GroupItem>
             <GroupItem caption='Household Owner Details' colCount={2}>
-              <Item
-                dataField='HouseOwnerName'
-                // editorType='dxSelectBox'
-                // editorOptions={{
-                //   items: this.state.jlCustomers,
-                //   valueExpr: "CardCode",
-                //   displayExpr: "CardCode",
-                //   onValueChanged: this.onCustomerChanged,
-                // }}
-              >
+              <Item dataField='HouseOwnerName'>
                 <RequiredRule message='Field is required to fill' />
                 <Label text='Household Owner Name' />
+              </Item>
+
+              <Item
+                dataField='Province'
+                editorType='dxSelectBox'
+                editorOptions={{
+                  readOnly: true,
+                  // searchEnabled: true,
+                  items: Province,
+                  valueExpr: "ID",
+                  displayExpr: "Name",
+                  onValueChanged: this.handleProvinceChange,
+                }}
+              >
+                <Label text='Province' />
+              </Item>
+
+              <Item
+                dataField='District'
+                editorType='dxSelectBox'
+                editorOptions={{
+                  readOnly: true,
+                  //searchEnabled: true,
+                  items: this.state.filteredDistricts,
+                  valueExpr: "ID",
+                  displayExpr: "Name",
+                  disabled: !this.state.selectedProvince,
+                  onValueChanged: this.handleDistrictChange,
+                }}
+              >
+                <Label text='District' />
+              </Item>
+
+              <Item
+                dataField='DiviSector'
+                editorType='dxSelectBox'
+                editorOptions={{
+                  readOnly: true,
+                  // searchEnabled: true,
+                  items: this.state.filteredDivSectors,
+                  valueExpr: "ID",
+                  displayExpr: "Name",
+                  disabled: !this.state.selectedDistrict,
+                }}
+              >
+                <Label text='Divisional Sectors' />
               </Item>
 
               <Item dataField='CusIdentificationNo'>
@@ -342,15 +542,15 @@ export class Dengue extends Component {
               </Item>
               <Item dataField='CusEmail'>
                 <Label text='Email' />
+                <RequiredRule message='Field is required to fill' />
               </Item>
-              <Item dataField='CusContactNo'>
+              <Item dataField='CusContactNo' editorType='dxNumberBox'>
+                <RequiredRule message='Field is required to fill' />
                 <Label text='Mobile No' />
               </Item>
               <Item dataField='Address' editorType='dxTextArea'>
                 <Label text='Address' />
-              </Item>
-              <Item dataField='NoOfPatients' editorType='dxNumberBox'>
-                <Label text='No Of Patients' />
+                <RequiredRule message='Field is required to fill' />
               </Item>
             </GroupItem>
           </Form>
@@ -536,6 +736,17 @@ export class Dengue extends Component {
               <Item dataField='followUpDate' editorType='dxDateBox'>
                 <Label text='Next Follow-up Date' />
               </Item>
+              <Item
+                dataField='ImpotentType'
+                editorType='dxSelectBox'
+                editorOptions={{
+                  items: this.jSituationType,
+                  valueExpr: "ID",
+                  displayExpr: "Name",
+                }}
+              >
+                <Label text='Situation Type' />
+              </Item>
 
               <Item dataField='InspectionNotes' editorType='dxTextArea'>
                 <Label text='Inspection Notes' />
@@ -569,6 +780,7 @@ export class Dengue extends Component {
             <SearchPanel visible={true} />
             <GroupPanel visible={true} />
             <Paging defaultPageSize={6} />
+            <Column dataField='ConcernsID' editorOptions={{ readOnly: true }} />
             <Column dataField='Concerns' />
             <Column dataField='Answer' caption='Status'>
               <Lookup
@@ -659,7 +871,7 @@ export class Dengue extends Component {
 
           <DataGrid
             id='grid-list'
-            // keyExpr='AttachmentID'
+            keyExpr='AttachmentID'
             showBorders={true}
             wordWrapEnabled={true}
             allowSearch={true}
@@ -684,6 +896,10 @@ export class Dengue extends Component {
             <Paging defaultPageSize={20} />
             <Column dataField='Name' />
             <Column
+              dataField='AttachmentID'
+              editorOptions={{ readOnly: true }}
+            />
+            <Column
               dataField='AttachmentFilePath'
               editorOptions={{ readOnly: true }}
             />
@@ -705,7 +921,14 @@ export class Dengue extends Component {
                   hint: "Upload",
                   icon: "upload",
                   visible: true,
-                  onClick: this.onUploadUploadAttchmentClick,
+                  //onClick: this.onUploadUploadAttchmentClick,
+                  onClick: (e) =>
+                    this.onUploadUploadAttchmentClick(
+                      e,
+                      e.row.data.AttachmentName,
+                      e.row.data.AttachmentFilePath,
+                      e.row.data.AttachmentID
+                    ),
                 },
                 "edit",
                 {
@@ -713,7 +936,7 @@ export class Dengue extends Component {
                   icon: "fa fa-eye",
                   onClick: this.onAppViewClick,
                 },
-                "delete",
+                // "delete",
               ]}
             />
           </DataGrid>
@@ -728,7 +951,7 @@ export class Dengue extends Component {
                 border: "none",
               }}
               onClick={this.onSaveClick}
-              disabled={this.state.DocReadOnly}
+              disabled={this.state.isEdit}
             >
               Save
             </Button>
@@ -740,7 +963,8 @@ export class Dengue extends Component {
                 color: "white",
                 border: "none",
               }}
-              // onClick={this.onClearClick}
+              onClick={this.onClearClick}
+              disabled={this.state.isEdit}
             >
               Clear
             </Button>
@@ -755,22 +979,48 @@ export class Dengue extends Component {
           </Navbar>
         </Card>
 
-        {/* <LoadPanel
-          message="Processing.... Please, wait..."
-          shadingColor="rgba(0,0,0,0.4)"
-          onHiding={this.onLoadPanelHiding}
-          visible={this.state.LoadPanelVisible}
-          showIndicator={true}
-          shading={true}
-          showPane={true}
-          closeOnOutsideClick={false}
-          width={500}
-        /> */}
-        {/* <List
-          Show={this.state.ListViewing}
-          OnHide={this.onViewListClick}
-          //FeedbackList={this.state.FeedbackList}
-        ></List>*/}
+        <Card title='Form List'>
+          <DataGrid
+            dataSource={this.state.FormData}
+            showBorders={true}
+            wordWrapEnabled={true}
+            allowSearch={true}
+            selection={{ mode: "single" }}
+            hoverStateEnabled={true}
+            onCellDblClick={this.updatePRTable}
+            allowColumnResizing={true}
+            columnAutoWidth={true}
+          >
+            <SearchPanel visible={true} />
+            <Paging defaultPageSize={20} />
+            <Column dataField='FormID' caption='Form ID' />
+            <Column dataField='PhiID' caption='Phi ID'>
+              {/* <Lookup
+                items={PRType}
+                valueExpr='PRTypeCode'
+                displayExpr='Discription'
+              /> */}
+            </Column>
+            <Column dataField='ImpotentType' caption='Impotent Type' />
+            <Column dataField='ApprovalStatus' caption='Approval Status' />
+            <Column
+              dataField='followUpDate'
+              editorType='dxDateBox'
+              caption='Follow UpDate'
+              format='dd/MM/yyyy'
+              customizeText={(cellInfo) => {
+                let formattedDate = null;
+                if (cellInfo.value != null) {
+                  const date = new Date(cellInfo.value);
+                  formattedDate = `${date.getDate()}/${
+                    date.getMonth() + 1
+                  }/${date.getFullYear()}`;
+                }
+                return formattedDate;
+              }}
+            ></Column>
+          </DataGrid>
+        </Card>
 
         <UploadAttchment
           ref={this.ReportRef}
@@ -783,7 +1033,6 @@ export class Dengue extends Component {
   }
 }
 const mapStateToProps = (state) => {
-  console.log(state.loggedReducer);
   return {
     data: state.loggedReducer,
   };

@@ -44,7 +44,7 @@ export class Household extends Component {
       //  FeedbackList: [],
       LoadPanelVisible: false,
       ListViewing: false,
-      DocumentID: 5002,
+      DocumentID: 20,
       jFeedbackAction: [],
       messages: [], // Ensure messages is an array
       newMessage: "",
@@ -79,20 +79,38 @@ export class Household extends Component {
   //   }));
   // }
 
-  componentDidMount = () => {
-    axios
-      .all([
-        axios.get("/api/getUserDetails", {
-          params: { userName: "sds" },
-        }),
-      ])
-      .then(
-        axios.spread(async (req) => {
-          this.setState({
-            jFormList: req.data,
-          });
-        })
-      );
+  componentDidMount = async () => {
+    const authData = JSON.parse(localStorage.getItem("user"));
+
+    const checkAuthentication = await axios.get(
+      "/api/CheckUserAuthentication",
+      {
+        params: {
+          UserGroup: authData.UserGroup,
+          MenuID: this.state.DocumentID,
+        },
+      }
+    );
+
+    if (checkAuthentication.data[0].IsEdit == 1) {
+      this.setState({
+        isEdit: false,
+      });
+
+      axios
+        .all([
+          axios.get("/api/getUserDetails", {
+            params: { userName: authData.UserName },
+          }),
+        ])
+        .then(
+          axios.spread(async (req) => {
+            this.setState({
+              jFormList: req.data,
+            });
+          })
+        );
+    }
   };
 
   render() {

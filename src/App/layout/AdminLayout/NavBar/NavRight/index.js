@@ -6,7 +6,8 @@ import Aux from "../../../../../hoc/_Aux";
 import DEMO from "../../../../../store/constant";
 
 // import Avatar4 from "../../../../../assets/images/user/avatar-4.jpg";
-import Avatar4 from "../../../../../image/logo new1.jpg";
+
+import Avatar4 from "../../../../../assets/images/logo new01.png";
 
 import { connect } from "react-redux";
 import { loggout } from "../../../../../store/logginActions";

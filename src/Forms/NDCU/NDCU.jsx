@@ -35,10 +35,11 @@ export class NDCU extends Component {
       DocReadOnly: false,
       jPhi: [],
       jPhiDetails: [],
-      DocumentID: 5002,
+      DocumentID: 10,
       jFeedbackAction: [],
       messages: [], // Ensure messages is an array
       newMessage: "",
+      isEdit: true,
     };
 
     this.FormRef = React.createRef();
@@ -155,6 +156,26 @@ export class NDCU extends Component {
     });
   };
 
+  componentDidMount = async () => {
+    const authData = JSON.parse(localStorage.getItem("user"));
+
+    const checkAuthentication = await axios.get(
+      "/api/CheckUserAuthentication",
+      {
+        params: {
+          UserGroup: authData.UserGroup,
+          MenuID: this.state.DocumentID,
+        },
+      }
+    );
+
+    if (checkAuthentication.data[0].IsEdit == 1) {
+      this.setState({
+        isEdit: false,
+      });
+    }
+  };
+
   render() {
     return (
       <div>
@@ -172,6 +193,7 @@ export class NDCU extends Component {
                   items={Province}
                   valueExpr='ID'
                   displayExpr='Name'
+                  disabled={this.state.isEdit}
                   onValueChanged={this.handleProvinceChange}
                 />
               </Item>
@@ -202,12 +224,6 @@ export class NDCU extends Component {
               </Item>
               <Item
                 dataField='phi'
-                // editorType='dxSelectBox'
-                // editorOptions={{
-                //   items: this.state.jPhi,
-                //   valueExpr: "UserName",
-                //   displayExpr: "UserName",
-                // }}
               >
                 <SelectBox
                   searchEnabled={true}
@@ -225,6 +241,7 @@ export class NDCU extends Component {
           <Form>
             <GroupItem caption='Complaint Details' colCount={2}></GroupItem>
           </Form>
+
           <DataGrid
             id='grid-list'
             //  keyExpr='ConcernsID'
@@ -243,7 +260,7 @@ export class NDCU extends Component {
             <Editing
               mode='popup'
               allowDeleting={true}
-              allowAdding={true}
+              allowAdding={!this.state.isEdit}
               allowUpdating={true}
               useIcons={true}
             >
@@ -298,6 +315,11 @@ export class NDCU extends Component {
               caption='Next Follow UpDate'
               editorOptions={{ readOnly: true }}
             />
+            <Column
+              dataField='followUpDate'
+              caption='Next Follow UpDate'
+              editorOptions={{ readOnly: true }}
+            />
             <Column dataField='ApprovalStatus' caption='Approval Status'>
               <Lookup
                 dataSource={this.ApprovalStatus}
@@ -319,10 +341,13 @@ export class NDCU extends Component {
               ]}
             />
           </DataGrid>
+          
         </Card>
       </div>
     );
   }
+
+  
 }
 const mapStateToProps = (state) => {
   console.log(state.loggedReducer);
